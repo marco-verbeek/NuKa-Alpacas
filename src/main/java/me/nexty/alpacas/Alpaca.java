@@ -256,14 +256,28 @@ public class Alpaca {
 
     public void setLocation(Location location){ this.location = location; }
     public void setHunger(double hunger) { this.hunger = hunger; }
-    public void addHunger(double value) {this.hunger += value; if(this.hunger > 100) this.hunger = 100; }
+
     public void setHappiness(double happiness) { this.happiness = happiness; }
-    public void addHappiness(double value) { this.happiness += value; if(this.happiness > 100) this.happiness = 100; }
     public void setReady(double ready) { this.ready = ready; }
-    private void addReadiness(double value) { this.ready += value; if(this.ready > 100) this.ready = 100; }
     public void setQuality(double quality) { this.quality = quality; }
-    private void addQuality(double value) { this.quality += value; if(this.quality > 100) this.quality = 100; }
     public void setEntity(Entity entity) { this.entity = entity; }
+
+    public void addHunger(double value) {
+        this.hunger += value;
+        if(this.hunger > 100) this.hunger = 100;
+    }
+    public void addHappiness(double value) {
+        this.happiness += value;
+        if(this.happiness > 100) this.happiness = 100;
+    }
+    private void addReadiness(double value) {
+        this.ready += value;
+        if(this.ready > 100) this.ready = 100;
+    }
+    private void addQuality(double value) {
+        this.quality += value;
+        if(this.quality > 100) this.quality = 100;
+    }
 
     public Location getLocation() { return this.entity.getLocation(); }
     public Entity getEntity() { return entity; }

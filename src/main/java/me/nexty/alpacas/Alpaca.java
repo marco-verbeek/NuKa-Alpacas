@@ -189,6 +189,8 @@ public class Alpaca {
 
             double happyValue = 0;
 
+            // TODO: debug in one console line
+
             int nearbyAlpacas = getNearbyAlpacas(alpaca);
             if(nearbyAlpacas <= 0){
                 happyValue += aloneFactor;
@@ -266,5 +268,5 @@ public class Alpaca {
     public Location getLocation() { return this.entity.getLocation(); }
     public Entity getEntity() { return entity; }
     public double getHunger() { return this.hunger; }
-    public boolean isReady() { return this.happiness == 100; }
+    public boolean isReady() { return this.ready == 100; }
 }

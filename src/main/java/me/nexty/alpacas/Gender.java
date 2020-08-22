@@ -4,7 +4,7 @@ public enum Gender {
     MALE('M'),
     FEMALE('F');
 
-    char abrv;
+    private char abrv;
 
     Gender(char abrv){
         this.abrv = abrv;

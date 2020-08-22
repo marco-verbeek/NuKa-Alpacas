@@ -6,8 +6,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
-import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Alpaca {
     // TODO: serialize in order to save it in yml
@@ -15,7 +16,6 @@ public class Alpaca {
 
     private static Main PLUGIN = null;
 
-    private UUID id;
     private Entity entity;
     private Location location;
 
@@ -33,15 +33,18 @@ public class Alpaca {
     private static char EMPTY_PROGRESS = '⬜';
     private static char FULL_PROGRESS = '⬛';
 
-    public Alpaca(String name, Gender gender){
-        this.id = UUID.randomUUID();
+    private static BukkitTask BEHAVIOR_TASK = null;
+
+    public Alpaca(Entity entity, String name, Gender gender){
+        this.entity = entity;
+
         this.name = name;
         this.gender = gender;
 
         this.hunger = 6*12;
         this.happiness = 4*12;
         this.quality = 0;
-        this.ready = 1*12;
+        this.ready = 12;
     }
 
     /**
@@ -65,7 +68,7 @@ public class Alpaca {
         if(this.hologram == null) createHologram();
 
         this.hologram.clearLines();
-        this.hologram.insertTextLine(0, ChatColor.translateAlternateColorCodes('&', String.format("&b%s &f(&7%s&f)", this.name, this.gender.name)));
+        this.hologram.insertTextLine(0, ChatColor.translateAlternateColorCodes('&', String.format("&b%s &f(&7%c&f)", this.name, this.gender.abrv)));
         this.hologram.insertTextLine(1, ChatColor.translateAlternateColorCodes('&', String.format("&6%s", formatProgress(this.happiness))));
 
         String readyOrQuality;
@@ -112,6 +115,48 @@ public class Alpaca {
         return true;
     }
 
+    /**
+     * The Behavior Task gets executed once every 5 minutes
+     * It updates every Alpaca's happiness, readiness and wool quality every 10 minutes.
+     * Every hour, Alpacas lose between 0.6 and 1 hunger.
+     */
+    public static void startBehavior(){
+        if(BEHAVIOR_TASK == null){
+            // TODO: cancel current task? re-setup behavior? do nothing?
+            return;
+        }
+
+        BEHAVIOR_TASK = new BukkitRunnable(){
+            int cycle = 0;
+
+            @Override
+            public void run() {
+                // Every half hour, make alpacas lose between 0.3 and 0.5 hunger
+                if(cycle % 6 == 0){
+                    PLUGIN.getLogger().info("[Alpacas] Half an hour has passed. Updating hunger.");
+
+                    PLUGIN.getAlpacas().forEach(alpaca -> {
+                        //double randomValue = ThreadLocalRandom.current().nextDouble(0.30, 0.51);
+                        double randomValue = ThreadLocalRandom.current().nextDouble(10, 20);
+                        alpaca.addHunger(randomValue);
+                    });
+                }
+
+                // Every 10 minutes, update HAPPINESS and READINESS/QUALITY depending on hunger, hasMusic, isAlone
+                if(cycle % 10 == 0){
+                    PLUGIN.getLogger().info("[Alpacas] Half an hour has passed. Updating happiness and quality.");
+
+                    // TODO: calculate happiness, add readiness and update quality depending on happiness
+                    PLUGIN.getAlpacas().forEach(alpaca -> {
+
+                    });
+                }
+
+                cycle += 5;
+            }
+        }.runTaskTimer(PLUGIN, 0, 5*60*20);
+    }
+
     private static String formatProgress(double percent){
         StringBuilder str = new StringBuilder();
 
@@ -133,11 +178,11 @@ public class Alpaca {
 
     public void setLocation(Location location){ this.location = location; }
     public void setHunger(double hunger) { this.hunger = hunger; }
+    public void addHunger(double value) {this.hunger += value; }
     public void setHappiness(double happiness) { this.happiness = happiness; }
     public void setReady(double ready) { this.ready = ready; }
     public void setEntity(Entity entity) { this.entity = entity; }
 
-    public UUID getId() { return id; }
     public Location getLocation() { return this.entity.getLocation(); }
     public Entity getEntity() { return entity; }
 }

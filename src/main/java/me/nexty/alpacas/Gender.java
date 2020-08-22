@@ -1,16 +1,16 @@
 package me.nexty.alpacas;
 
 public enum Gender {
-    MALE("M"),
-    FEMALE("F");
+    MALE('M'),
+    FEMALE('F');
 
-    String name;
+    char abrv;
 
-    Gender(String name){
-        this.name = name;
+    Gender(char abrv){
+        this.abrv = abrv;
     }
 
-    public String getName() {
-        return name;
+    public char getAbrv() {
+        return abrv;
     }
 }

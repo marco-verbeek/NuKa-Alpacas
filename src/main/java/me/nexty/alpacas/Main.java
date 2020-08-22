@@ -9,16 +9,19 @@ import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.UUID;
 
 public class Main extends JavaPlugin {
-    private HashMap<Integer, Alpaca> alpacas = new HashMap<>();
-    private int currentAmountAlpacas = 0;
+    private HashMap<UUID, Alpaca> alpacas = new HashMap<>();
 
     @Override
     public void onEnable() {
         this.getServer().getPluginManager().registerEvents(new EventListener(this), this);
+
         Alpaca.setPlugin(this);
+        Alpaca.startBehavior();
 
         if (!Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays")) {
             getLogger().severe("*** HolographicDisplays is not installed or not enabled. ***");
@@ -27,29 +30,41 @@ public class Main extends JavaPlugin {
             return;
         }
 
-        // TODO: get all Alpacas, add them to HashMap, forEach = currentAmount++
+        // TODO: get all Alpacas, add them to HashMap
     }
 
     @Override
     public void onDisable() {
-        // TODO: forEach Alpaca in HashMap, save to YML.
+        // TODO: forEach Alpaca in HashMap, save to YML
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if(sender instanceof Player && label.equalsIgnoreCase("nuka")){
-            Entity alpaca;
+            Entity entity;
 
             try {
-                alpaca = Bukkit.getWorld("world").spawnEntity(((Player) sender).getLocation(), EntityType.LLAMA);
+                entity = Bukkit.getWorld("world").spawnEntity(((Player) sender).getLocation(), EntityType.LLAMA);
             } catch(NullPointerException ex){
                 ex.printStackTrace();
                 return false;
             }
 
-            alpaca.setMetadata("NUKA_ALPACA", new FixedMetadataValue(this, true));
+            entity.setMetadata("NUKA_ALPACA", new FixedMetadataValue(this, true));
+
+            Alpaca alpaca = new Alpaca(entity, "Alpi", Gender.MALE);
+            this.alpacas.put(entity.getUniqueId(), alpaca);
         }
 
         return true;
+    }
+
+    // TODO: Should this return a clone?
+    public Alpaca getAlpaca(UUID uniqueId) {
+        return this.alpacas.get(uniqueId);
+    }
+
+    public Collection<Alpaca> getAlpacas(){
+        return this.alpacas.values();
     }
 }

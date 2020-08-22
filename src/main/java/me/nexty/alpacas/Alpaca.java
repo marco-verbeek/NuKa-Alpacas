@@ -136,15 +136,15 @@ public class Alpaca {
                 if(cycle % 6 == 0){
                     PLUGIN.getLogger().info("[Alpacas] Half an hour has passed. Updating hunger.");
 
-                    PLUGIN.getAlpacas().forEach(alpaca -> { hungerBehavior(alpaca); });
+                    PLUGIN.getAlpacas().forEach(Alpaca::hungerBehavior);
                 }
 
                 // Every 10 minutes, update HAPPINESS and READINESS/QUALITY depending on hunger, hasMusic, isAlone
                 if(cycle % 10 == 0){
                     PLUGIN.getLogger().info("[Alpacas] 10 minutes have passed. Updating happiness and quality.");
 
-                    PLUGIN.getAlpacas().forEach(alpaca -> { happinessBehavior(alpaca); });
-                    PLUGIN.getAlpacas().forEach(alpaca -> { qualityBehavior(alpaca); });
+                    PLUGIN.getAlpacas().forEach(Alpaca::happinessBehavior);
+                    PLUGIN.getAlpacas().forEach(Alpaca::qualityBehavior);
                 }
 
                 cycle += 5;
@@ -161,12 +161,12 @@ public class Alpaca {
             @Override
             public void run() {
                 if(cycle % 2 == 0){
-                    PLUGIN.getAlpacas().forEach(alpaca -> { hungerBehavior(alpaca); });
+                    PLUGIN.getAlpacas().forEach(Alpaca::hungerBehavior);
                 }
 
                 if(cycle % 10 == 0){
-                    PLUGIN.getAlpacas().forEach(alpaca -> { happinessBehavior(alpaca); });
-                    PLUGIN.getAlpacas().forEach(alpaca -> { qualityBehavior(alpaca); });
+                    PLUGIN.getAlpacas().forEach(Alpaca::happinessBehavior);
+                    PLUGIN.getAlpacas().forEach(Alpaca::qualityBehavior);
                 }
 
                 cycle++;

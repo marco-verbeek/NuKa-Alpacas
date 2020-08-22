@@ -21,8 +21,8 @@ public class Main extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(new EventListener(this), this);
 
         Alpaca.setPlugin(this);
-        Alpaca.startBehavior();
-        //Alpaca.startTestingBehavior();
+        //Alpaca.startBehavior();
+        Alpaca.startTestingBehavior();
 
         if (!Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays")) {
             getLogger().severe("*** HolographicDisplays is not installed or not enabled. ***");

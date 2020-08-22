@@ -29,7 +29,7 @@ public class EventListener implements Listener {
 
         alpaca.refreshHologram();
 
-        player.sendMessage("[Alpaca] Hunger: %f, ");
+        player.sendMessage(String.format("[Alpaca] Hunger: %f", alpaca.getHunger()));
 
         // TODO: feed Alpaca
     }

@@ -5,6 +5,7 @@ import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -121,7 +122,7 @@ public class Alpaca {
      * Every hour, Alpacas lose between 0.6 and 1 hunger.
      */
     public static void startBehavior(){
-        if(BEHAVIOR_TASK == null){
+        if(BEHAVIOR_TASK != null){
             // TODO: cancel current task? re-setup behavior? do nothing?
             return;
         }
@@ -135,15 +136,15 @@ public class Alpaca {
                 if(cycle % 6 == 0){
                     PLUGIN.getLogger().info("[Alpacas] Half an hour has passed. Updating hunger.");
 
-                    hungerBehavior();
+                    PLUGIN.getAlpacas().forEach(alpaca -> { hungerBehavior(alpaca); });
                 }
 
                 // Every 10 minutes, update HAPPINESS and READINESS/QUALITY depending on hunger, hasMusic, isAlone
                 if(cycle % 10 == 0){
-                    PLUGIN.getLogger().info("[Alpacas] Half an hour has passed. Updating happiness and quality.");
+                    PLUGIN.getLogger().info("[Alpacas] 10 minutes have passed. Updating happiness and quality.");
 
-                   happinessBehavior();
-                   qualityBehavior();
+                    PLUGIN.getAlpacas().forEach(alpaca -> { happinessBehavior(alpaca); });
+                    PLUGIN.getAlpacas().forEach(alpaca -> { qualityBehavior(alpaca); });
                 }
 
                 cycle += 5;
@@ -152,7 +153,7 @@ public class Alpaca {
     }
 
     public static void startTestingBehavior(){
-        if(BEHAVIOR_TASK == null) return;
+        if(BEHAVIOR_TASK != null) return;
 
         BEHAVIOR_TASK = new BukkitRunnable(){
             int cycle = 0;
@@ -160,12 +161,12 @@ public class Alpaca {
             @Override
             public void run() {
                 if(cycle % 2 == 0){
-                    hungerBehavior();
+                    PLUGIN.getAlpacas().forEach(alpaca -> { hungerBehavior(alpaca); });
                 }
 
                 if(cycle % 10 == 0){
-                    happinessBehavior();
-                    qualityBehavior();
+                    PLUGIN.getAlpacas().forEach(alpaca -> { happinessBehavior(alpaca); });
+                    PLUGIN.getAlpacas().forEach(alpaca -> { qualityBehavior(alpaca); });
                 }
 
                 cycle++;
@@ -173,20 +174,63 @@ public class Alpaca {
         }.runTaskTimer(PLUGIN, 0, 20);
     }
 
-    private static void hungerBehavior(){
-        PLUGIN.getAlpacas().forEach(alpaca -> {
-            //double randomValue = ThreadLocalRandom.current().nextDouble(0.30, 0.51);
-            double randomValue = ThreadLocalRandom.current().nextDouble(10, 20);
-            alpaca.addHunger(randomValue);
-        });
+    private static void hungerBehavior(Alpaca alpaca){
+        //double randomValue = ThreadLocalRandom.current().nextDouble(0.30, 0.51);
+        double randomValue = ThreadLocalRandom.current().nextDouble(5, 10);
+
+        alpaca.addHunger(randomValue);
     }
 
-    private static void happinessBehavior(){
-        // TODO
+    private static void happinessBehavior(Alpaca alpaca){
+            double aloneFactor = -1.0;
+            double familyValue = 0.1;
+            double hungerFactor = 0.25;
+            double musicFactor = 0.20;
+
+            double happyValue = 0;
+
+            int nearbyAlpacas = getNearbyAlpacas(alpaca);
+            if(nearbyAlpacas <= 0){
+                happyValue += aloneFactor;
+                PLUGIN.getLogger().info("Family of "+ nearbyAlpacas +": " + aloneFactor);
+            } else {
+                happyValue += nearbyAlpacas * familyValue;
+                PLUGIN.getLogger().info("Family of "+ nearbyAlpacas +": " + nearbyAlpacas * familyValue);
+            }
+
+            if(isMusicPlaying(alpaca)) happyValue += musicFactor;
+            PLUGIN.getLogger().info("Music: " + musicFactor);
+
+            if(alpaca.getHunger() <= 12){
+                happyValue -= (1.2 - (alpaca.getHunger() / 10)) * hungerFactor;
+                PLUGIN.getLogger().info("Hunger: " + (1.2 - (alpaca.getHunger() / 10)) * hungerFactor);
+            } else {
+                happyValue += (alpaca.getHunger() / 10) * hungerFactor;
+                PLUGIN.getLogger().info("Hunger was "+ alpaca.getHunger() +": " + (alpaca.getHunger() / 10) * hungerFactor);
+            }
+
+            PLUGIN.getLogger().info("Total: " + happyValue);
+
+            alpaca.addHappiness(happyValue);
     }
 
-    private static void qualityBehavior(){
+    private static void qualityBehavior(Alpaca alpaca){
+        if(!alpaca.isReady()){
+            double readinessValue = 25;
+            alpaca.addReadiness(readinessValue);
+        } else {
+            // TODO: value depends on happiness and previous happinesses
+            alpaca.addQuality(12);
+        }
+    }
+
+    private static int getNearbyAlpacas(Alpaca alpaca) {
+        return (int) alpaca.getEntity().getNearbyEntities(15, 15, 15).stream().filter(nearbyEntity -> nearbyEntity.getType() == EntityType.LLAMA).count();
+    }
+
+    private static boolean isMusicPlaying(Alpaca alpaca) {
         // TODO
+        return true;
     }
 
     private static String formatProgress(double percent){
@@ -210,11 +254,17 @@ public class Alpaca {
 
     public void setLocation(Location location){ this.location = location; }
     public void setHunger(double hunger) { this.hunger = hunger; }
-    public void addHunger(double value) {this.hunger += value; }
+    public void addHunger(double value) {this.hunger += value; if(this.hunger > 100) this.hunger = 100; }
     public void setHappiness(double happiness) { this.happiness = happiness; }
+    public void addHappiness(double value) { this.happiness += value; if(this.happiness > 100) this.happiness = 100; }
     public void setReady(double ready) { this.ready = ready; }
+    private void addReadiness(double value) { this.ready += value; if(this.ready > 100) this.ready = 100; }
+    public void setQuality(double quality) { this.quality = quality; }
+    private void addQuality(double value) { this.quality += value; if(this.quality > 100) this.quality = 100; }
     public void setEntity(Entity entity) { this.entity = entity; }
 
     public Location getLocation() { return this.entity.getLocation(); }
     public Entity getEntity() { return entity; }
+    public double getHunger() { return this.hunger; }
+    public boolean isReady() { return this.happiness == 100; }
 }

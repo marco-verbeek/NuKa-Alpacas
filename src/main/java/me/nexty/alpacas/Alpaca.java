@@ -68,7 +68,7 @@ public class Alpaca {
         if(this.hologram == null) createHologram();
 
         this.hologram.clearLines();
-        this.hologram.insertTextLine(0, ChatColor.translateAlternateColorCodes('&', String.format("&b%s &f(&7%c&f)", this.name, this.gender.abrv)));
+        this.hologram.insertTextLine(0, ChatColor.translateAlternateColorCodes('&', String.format("&b%s &f(&7%c&f)", this.name, this.gender.getAbrv())));
         this.hologram.insertTextLine(1, ChatColor.translateAlternateColorCodes('&', String.format("&6%s", formatProgress(this.happiness))));
 
         String readyOrQuality;
@@ -135,26 +135,58 @@ public class Alpaca {
                 if(cycle % 6 == 0){
                     PLUGIN.getLogger().info("[Alpacas] Half an hour has passed. Updating hunger.");
 
-                    PLUGIN.getAlpacas().forEach(alpaca -> {
-                        //double randomValue = ThreadLocalRandom.current().nextDouble(0.30, 0.51);
-                        double randomValue = ThreadLocalRandom.current().nextDouble(10, 20);
-                        alpaca.addHunger(randomValue);
-                    });
+                    hungerBehavior();
                 }
 
                 // Every 10 minutes, update HAPPINESS and READINESS/QUALITY depending on hunger, hasMusic, isAlone
                 if(cycle % 10 == 0){
                     PLUGIN.getLogger().info("[Alpacas] Half an hour has passed. Updating happiness and quality.");
 
-                    // TODO: calculate happiness, add readiness and update quality depending on happiness
-                    PLUGIN.getAlpacas().forEach(alpaca -> {
-
-                    });
+                   happinessBehavior();
+                   qualityBehavior();
                 }
 
                 cycle += 5;
             }
         }.runTaskTimer(PLUGIN, 0, 5*60*20);
+    }
+
+    public static void startTestingBehavior(){
+        if(BEHAVIOR_TASK == null) return;
+
+        BEHAVIOR_TASK = new BukkitRunnable(){
+            int cycle = 0;
+
+            @Override
+            public void run() {
+                if(cycle % 2 == 0){
+                    hungerBehavior();
+                }
+
+                if(cycle % 10 == 0){
+                    happinessBehavior();
+                    qualityBehavior();
+                }
+
+                cycle++;
+            }
+        }.runTaskTimer(PLUGIN, 0, 20);
+    }
+
+    private static void hungerBehavior(){
+        PLUGIN.getAlpacas().forEach(alpaca -> {
+            //double randomValue = ThreadLocalRandom.current().nextDouble(0.30, 0.51);
+            double randomValue = ThreadLocalRandom.current().nextDouble(10, 20);
+            alpaca.addHunger(randomValue);
+        });
+    }
+
+    private static void happinessBehavior(){
+        // TODO
+    }
+
+    private static void qualityBehavior(){
+        // TODO
     }
 
     private static String formatProgress(double percent){

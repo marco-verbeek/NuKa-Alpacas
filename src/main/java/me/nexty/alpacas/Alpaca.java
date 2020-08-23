@@ -4,11 +4,13 @@ import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.util.HashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Alpaca {
@@ -29,12 +31,18 @@ public class Alpaca {
     private double hunger;
     private double happiness;
     private double quality;
-    private double ready;
+    private double readiness;
 
     private static char EMPTY_PROGRESS = '⬜';
     private static char FULL_PROGRESS = '⬛';
 
     private static BukkitTask BEHAVIOR_TASK = null;
+
+    private static HashMap<Material, Double> ACCEPTED_FOOD = new HashMap<Material, Double>() {{
+        put(Material.APPLE, 10.0);
+        put(Material.CARROT, 8.0);
+        put(Material.GRASS, 2.0);
+    }};
 
     public Alpaca(Entity entity, String name, Gender gender){
         this.entity = entity;
@@ -45,7 +53,7 @@ public class Alpaca {
         this.hunger = 6*12;
         this.happiness = 4*12;
         this.quality = 0;
-        this.ready = 12;
+        this.readiness = 12;
     }
 
     /**
@@ -73,10 +81,10 @@ public class Alpaca {
         this.hologram.insertTextLine(1, ChatColor.translateAlternateColorCodes('&', String.format("&6%s", formatProgress(this.happiness))));
 
         String readyOrQuality;
-        if(ready == 100)
+        if(readiness == 100)
             readyOrQuality = String.format("&b%s", formatProgress(this.quality));
         else
-            readyOrQuality = String.format("&f%s", formatProgress(this.ready));
+            readyOrQuality = String.format("&f%s", formatProgress(this.readiness));
 
         this.hologram.insertTextLine(2, ChatColor.translateAlternateColorCodes('&', readyOrQuality));
 
@@ -175,7 +183,7 @@ public class Alpaca {
     }
 
     private static void hungerBehavior(Alpaca alpaca){
-        //double randomValue = ThreadLocalRandom.current().nextDouble(0.30, 0.51);
+        //double randomValue = ThreadLocalRandom.current().nextDouble(0.30, 0.51) * -1;
         double randomValue = ThreadLocalRandom.current().nextDouble(5, 10);
 
         alpaca.addHunger(randomValue);
@@ -235,6 +243,16 @@ public class Alpaca {
         return true;
     }
 
+    public static double getFoodValue(Material material){
+        return ACCEPTED_FOOD.getOrDefault(material, 0.0);
+    }
+
+    public static void setPlugin(Main plugin){
+        if(plugin == null) return;
+
+        PLUGIN = plugin;
+    }
+
     private static String formatProgress(double percent){
         StringBuilder str = new StringBuilder();
 
@@ -248,17 +266,11 @@ public class Alpaca {
         return str.toString();
     }
 
-    public static void setPlugin(Main plugin){
-        if(plugin == null) return;
-
-        PLUGIN = plugin;
-    }
-
     public void setLocation(Location location){ this.location = location; }
     public void setHunger(double hunger) { this.hunger = hunger; }
 
     public void setHappiness(double happiness) { this.happiness = happiness; }
-    public void setReady(double ready) { this.ready = ready; }
+    public void setReadiness(double readiness) { this.readiness = readiness; }
     public void setQuality(double quality) { this.quality = quality; }
     public void setEntity(Entity entity) { this.entity = entity; }
 
@@ -271,8 +283,8 @@ public class Alpaca {
         if(this.happiness > 100) this.happiness = 100;
     }
     private void addReadiness(double value) {
-        this.ready += value;
-        if(this.ready > 100) this.ready = 100;
+        this.readiness += value;
+        if(this.readiness > 100) this.readiness = 100;
     }
     private void addQuality(double value) {
         this.quality += value;
@@ -280,7 +292,11 @@ public class Alpaca {
     }
 
     public Location getLocation() { return this.entity.getLocation(); }
-    public Entity getEntity() { return entity; }
+    public Entity getEntity() { return this.entity; }
     public double getHunger() { return this.hunger; }
-    public boolean isReady() { return this.ready == 100; }
+    public double getHappiness() { return this.happiness; }
+    public double getQuality() { return this.quality; }
+    public double getReadiness() { return this.readiness; }
+
+    public boolean isReady() { return this.readiness == 100; }
 }

@@ -60,7 +60,6 @@ public class Main extends JavaPlugin {
         return true;
     }
 
-    // TODO: Should this return a clone?
     public Alpaca getAlpaca(UUID uniqueId) {
         return this.alpacas.get(uniqueId);
     }

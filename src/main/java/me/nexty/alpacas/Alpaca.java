@@ -5,6 +5,7 @@ import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Jukebox;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -77,13 +78,13 @@ public class Alpaca {
 
         this.hologram.clearLines();
         this.hologram.insertTextLine(0, ChatColor.translateAlternateColorCodes('&', String.format("&b%s &f(&7%c&f)", this.name, this.gender.getAbrv())));
-        this.hologram.insertTextLine(1, ChatColor.translateAlternateColorCodes('&', String.format("&6%s", formatProgress(this.happiness))));
+        this.hologram.insertTextLine(1, ChatColor.translateAlternateColorCodes('&', String.format("&6%s (%.00f)", formatProgress(this.happiness), this.happiness)));
 
         String readyOrQuality;
         if(readiness == 100)
-            readyOrQuality = String.format("&b%s", formatProgress(this.quality));
+            readyOrQuality = String.format("&b%s (%.00f)", formatProgress(this.quality), this.quality);
         else
-            readyOrQuality = String.format("&f%s", formatProgress(this.readiness));
+            readyOrQuality = String.format("&f%s (%.00f)", formatProgress(this.readiness), this.readiness);
 
         this.hologram.insertTextLine(2, ChatColor.translateAlternateColorCodes('&', readyOrQuality));
 
@@ -129,10 +130,7 @@ public class Alpaca {
      * Every hour, Alpacas lose between 0.6 and 1 hunger.
      */
     public static void startBehavior(){
-        if(BEHAVIOR_TASK != null){
-            // TODO: cancel current task? re-setup behavior? do nothing?
-            return;
-        }
+        if(BEHAVIOR_TASK != null) return;
 
         BEHAVIOR_TASK = new BukkitRunnable(){
             int cycle = 0;
@@ -216,7 +214,8 @@ public class Alpaca {
             debug += String.format("Hunger was %.00f -> %.00f | ", alpaca.getHunger(), (alpaca.getHunger() / 10) * hungerFactor);
         }
 
-        debug += String.format("Total: %f", happyValue);
+        debug += String.format("Total: %f | ", happyValue);
+        debug += String.format("%.00f + %.00f = %.00f", alpaca.getHappiness(), happyValue, alpaca.getHappiness() + happyValue);
         PLUGIN.getLogger().info(debug);
 
         alpaca.addHappiness(happyValue);
@@ -237,8 +236,16 @@ public class Alpaca {
     }
 
     private static boolean isMusicPlaying(Alpaca alpaca) {
-        // TODO
-        return true;
+        Location centerLoc = alpaca.getLocation();
+        int radius = 15;
+
+        for(int x = centerLoc.getBlockX() - radius; x <= centerLoc.getBlockX() + radius; x++)
+            for(int y = centerLoc.getBlockY() - radius; y <= centerLoc.getBlockY() + radius; y++)
+                for(int z = centerLoc.getBlockZ() - radius; z <= centerLoc.getBlockZ() + radius; z++)
+                    if(centerLoc.getWorld().getBlockAt(x, y, z).getType() == Material.JUKEBOX && ((Jukebox) centerLoc.getWorld().getBlockAt(x, y, z)).isPlaying())
+                        return true;
+
+        return false;
     }
 
     public static boolean isFood(Material material){
@@ -275,20 +282,16 @@ public class Alpaca {
     public void setQuality(double quality) { this.quality = quality; }
 
     public void addHunger(double value) {
-        this.hunger += value;
-        if(this.hunger > 100) this.hunger = 100;
+        this.hunger = Math.max(0, Math.min(100, this.hunger + value));
     }
     public void addHappiness(double value) {
-        this.happiness += value;
-        if(this.happiness > 100) this.happiness = 100;
+        this.happiness = Math.max(0, Math.min(100, this.happiness + value));
     }
     private void addReadiness(double value) {
-        this.readiness += value;
-        if(this.readiness > 100) this.readiness = 100;
+        this.readiness = Math.max(0, Math.min(100, this.readiness + value));
     }
     private void addQuality(double value) {
-        this.quality += value;
-        if(this.quality > 100) this.quality = 100;
+        this.quality = Math.max(0, Math.min(100, this.quality + value));
     }
 
     public Entity getEntity() { return this.entity; }

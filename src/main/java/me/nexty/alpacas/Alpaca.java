@@ -199,10 +199,10 @@ public class Alpaca {
         int nearbyAlpacas = getNearbyAlpacas(alpaca);
         if(nearbyAlpacas <= 0){
             happyValue += aloneFactor;
-            debug += String.format("Family of %d -> %f | ", nearbyAlpacas, aloneFactor);
+            debug += String.format("Family of %d -> %.00f | ", nearbyAlpacas, aloneFactor);
         } else {
             happyValue += nearbyAlpacas * familyValue;
-            debug += String.format("Family of %d -> %f | ", nearbyAlpacas, nearbyAlpacas * familyValue);
+            debug += String.format("Family of %d -> %.00f | ", nearbyAlpacas, nearbyAlpacas * familyValue);
         }
 
         if(isMusicPlaying(alpaca)) happyValue += musicFactor;
@@ -210,10 +210,10 @@ public class Alpaca {
 
         if(alpaca.getHunger() <= 12){
             happyValue -= (1.2 - (alpaca.getHunger() / 10)) * hungerFactor;
-            debug += String.format("Hunger: %f | ", (1.2 - (alpaca.getHunger() / 10)) * hungerFactor);
+            debug += String.format("Hunger: %.00f | ", (1.2 - (alpaca.getHunger() / 10)) * hungerFactor);
         } else {
-            happyValue += (alpaca.getHunger() / 10) * hungerFactor;
-            debug += String.format("Hunger was %f -> %f | ", alpaca.getHunger(), (alpaca.getHunger() / 10) * hungerFactor);
+            happyValue += ((alpaca.getHunger() / 10) * hungerFactor) * 0.5;
+            debug += String.format("Hunger was %.00f -> %.00f | ", alpaca.getHunger(), (alpaca.getHunger() / 10) * hungerFactor);
         }
 
         debug += String.format("Total: %f", happyValue);
@@ -265,8 +265,7 @@ public class Alpaca {
             str.append((i <= cubeAmount) ? FULL_PROGRESS : EMPTY_PROGRESS);
         }
 
-        PLUGIN.getLogger().severe("[Alpacas] Percent was " + percent + ", therefore I created progressbar: " + str);
-
+        //PLUGIN.getLogger().severe("[Alpacas] Percent was " + percent + ", therefore I created progressbar: " + str);
         return str.toString();
     }
 

@@ -28,11 +28,11 @@ public class EventListener implements Listener {
         Alpaca alpaca = this.plugin.getAlpaca(entity.getUniqueId());
         if(alpaca == null) return;
 
-        player.sendMessage(String.format("Hunger: %f | Happy: %f | Ready: %f | Quality: %f", alpaca.getHunger(), alpaca.getHappiness(), alpaca.getReadiness(), alpaca.getQuality()));
-
         Material heldItem = player.getInventory().getItemInMainHand().getType();
         if(heldItem != null && Alpaca.isFood(heldItem))
             alpaca.feed(heldItem);
+
+        player.sendMessage(String.format("Hunger: %f | Happy: %f | Ready: %f | Quality: %f", alpaca.getHunger(), alpaca.getHappiness(), alpaca.getReadiness(), alpaca.getQuality()));
 
         alpaca.refreshHologram();
     }

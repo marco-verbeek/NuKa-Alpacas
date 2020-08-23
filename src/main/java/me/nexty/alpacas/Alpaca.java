@@ -241,8 +241,14 @@ public class Alpaca {
         return true;
     }
 
-    public static double getFoodValue(Material material){
-        return ACCEPTED_FOOD.getOrDefault(material, 0.0);
+    public static boolean isFood(Material material){
+        return ACCEPTED_FOOD.get(material) != null;
+    }
+
+    // TODO: check last time food given, need time before feeding again
+    public void feed(Material food){
+        double feedValue = ACCEPTED_FOOD.getOrDefault(food, 0.0);
+        this.addHunger(feedValue);
     }
 
     public static void setPlugin(Main plugin){

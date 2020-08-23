@@ -1,5 +1,6 @@
 package me.nexty.alpacas;
 
+import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -29,8 +30,9 @@ public class EventListener implements Listener {
 
         player.sendMessage(String.format("Hunger: %f | Happy: %f | Ready: %f | Quality: %f", alpaca.getHunger(), alpaca.getHappiness(), alpaca.getReadiness(), alpaca.getQuality()));
 
-        double hungerValue = Alpaca.getFoodValue(player.getInventory().getItemInMainHand().getType());
-        if(hungerValue > 0) alpaca.addHunger(hungerValue);
+        Material heldItem = player.getInventory().getItemInMainHand().getType();
+        if(heldItem != null && Alpaca.isFood(heldItem))
+            alpaca.feed(heldItem);
 
         alpaca.refreshHologram();
     }

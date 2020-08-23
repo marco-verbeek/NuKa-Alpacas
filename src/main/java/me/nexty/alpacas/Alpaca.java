@@ -33,6 +33,9 @@ public class Alpaca {
     private double quality;
     private double readiness;
 
+    private long lastFeed = -1;
+    private double feedAmount = 0;
+
     private static final char EMPTY_PROGRESS = '⬜';
     private static final char FULL_PROGRESS = '⬛';
 
@@ -252,9 +255,19 @@ public class Alpaca {
         return ACCEPTED_FOOD.get(material) != null;
     }
 
-    // TODO: check last time food given, need time before feeding again
+    // TODO: abstract feed values to config
     public void feed(Material food){
+        if(this.feedAmount >= 12){
+            if((System.currentTimeMillis() - this.lastFeed) >= 8*60*60*1000) {
+                this.feedAmount = 0;
+            } else return;
+        }
+
         double feedValue = ACCEPTED_FOOD.getOrDefault(food, 0.0);
+
+        this.feedAmount += feedValue;
+        this.lastFeed = System.currentTimeMillis();
+
         this.addHunger(feedValue);
     }
 

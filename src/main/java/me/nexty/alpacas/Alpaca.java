@@ -265,7 +265,6 @@ public class Alpaca {
             str.append((i <= cubeAmount) ? FULL_PROGRESS : EMPTY_PROGRESS);
         }
 
-        //PLUGIN.getLogger().severe("[Alpacas] Percent was " + percent + ", therefore I created progressbar: " + str);
         return str.toString();
     }
 

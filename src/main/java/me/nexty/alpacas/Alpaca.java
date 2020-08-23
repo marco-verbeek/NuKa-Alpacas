@@ -20,7 +20,6 @@ public class Alpaca {
     private static Main PLUGIN = null;
 
     private Entity entity;
-    private Location location;
 
     private Hologram hologram;
     private boolean hologramShown;
@@ -183,45 +182,44 @@ public class Alpaca {
     }
 
     private static void hungerBehavior(Alpaca alpaca){
-        //double randomValue = ThreadLocalRandom.current().nextDouble(0.30, 0.51) * -1;
-        double randomValue = ThreadLocalRandom.current().nextDouble(5, 10);
-
+        double randomValue = ThreadLocalRandom.current().nextDouble(0.30, 0.51) * -1;
         alpaca.addHunger(randomValue);
     }
 
     private static void happinessBehavior(Alpaca alpaca){
-            double aloneFactor = -1.0;
-            double familyValue = 0.1;
-            double hungerFactor = 0.25;
-            double musicFactor = 0.20;
+        double aloneFactor = -1.0;
+        double familyValue = 0.1;
+        double hungerFactor = 0.25;
+        double musicFactor = 0.20;
 
-            double happyValue = 0;
+        double happyValue = 0;
 
-            // TODO: debug in one console line
+        String debug = "";
 
-            int nearbyAlpacas = getNearbyAlpacas(alpaca);
-            if(nearbyAlpacas <= 0){
-                happyValue += aloneFactor;
-                PLUGIN.getLogger().info("Family of "+ nearbyAlpacas +": " + aloneFactor);
-            } else {
-                happyValue += nearbyAlpacas * familyValue;
-                PLUGIN.getLogger().info("Family of "+ nearbyAlpacas +": " + nearbyAlpacas * familyValue);
-            }
+        int nearbyAlpacas = getNearbyAlpacas(alpaca);
+        if(nearbyAlpacas <= 0){
+            happyValue += aloneFactor;
+            debug += String.format("Family of %d -> %f | ", nearbyAlpacas, aloneFactor);
+        } else {
+            happyValue += nearbyAlpacas * familyValue;
+            debug += String.format("Family of %d -> %f | ", nearbyAlpacas, nearbyAlpacas * familyValue);
+        }
 
-            if(isMusicPlaying(alpaca)) happyValue += musicFactor;
-            PLUGIN.getLogger().info("Music: " + musicFactor);
+        if(isMusicPlaying(alpaca)) happyValue += musicFactor;
+        debug += String.format("Music: %b | ", isMusicPlaying(alpaca));
 
-            if(alpaca.getHunger() <= 12){
-                happyValue -= (1.2 - (alpaca.getHunger() / 10)) * hungerFactor;
-                PLUGIN.getLogger().info("Hunger: " + (1.2 - (alpaca.getHunger() / 10)) * hungerFactor);
-            } else {
-                happyValue += (alpaca.getHunger() / 10) * hungerFactor;
-                PLUGIN.getLogger().info("Hunger was "+ alpaca.getHunger() +": " + (alpaca.getHunger() / 10) * hungerFactor);
-            }
+        if(alpaca.getHunger() <= 12){
+            happyValue -= (1.2 - (alpaca.getHunger() / 10)) * hungerFactor;
+            debug += String.format("Hunger: %f | ", (1.2 - (alpaca.getHunger() / 10)) * hungerFactor);
+        } else {
+            happyValue += (alpaca.getHunger() / 10) * hungerFactor;
+            debug += String.format("Hunger was %f -> %f | ", alpaca.getHunger(), (alpaca.getHunger() / 10) * hungerFactor);
+        }
 
-            PLUGIN.getLogger().info("Total: " + happyValue);
+        debug += String.format("Total: %f", happyValue);
+        PLUGIN.getLogger().info(debug);
 
-            alpaca.addHappiness(happyValue);
+        alpaca.addHappiness(happyValue);
     }
 
     private static void qualityBehavior(Alpaca alpaca){
@@ -266,13 +264,11 @@ public class Alpaca {
         return str.toString();
     }
 
-    public void setLocation(Location location){ this.location = location; }
+    public void setEntity(Entity entity) { this.entity = entity; }
     public void setHunger(double hunger) { this.hunger = hunger; }
-
     public void setHappiness(double happiness) { this.happiness = happiness; }
     public void setReadiness(double readiness) { this.readiness = readiness; }
     public void setQuality(double quality) { this.quality = quality; }
-    public void setEntity(Entity entity) { this.entity = entity; }
 
     public void addHunger(double value) {
         this.hunger += value;
@@ -291,8 +287,8 @@ public class Alpaca {
         if(this.quality > 100) this.quality = 100;
     }
 
-    public Location getLocation() { return this.entity.getLocation(); }
     public Entity getEntity() { return this.entity; }
+    public Location getLocation() { return this.entity.getLocation(); }
     public double getHunger() { return this.hunger; }
     public double getHappiness() { return this.happiness; }
     public double getQuality() { return this.quality; }

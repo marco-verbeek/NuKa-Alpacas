@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.UUID;
 
 public class Main extends JavaPlugin {
-    private HashMap<UUID, Alpaca> alpacas = new HashMap<>();
+    private final HashMap<UUID, Alpaca> alpacas = new HashMap<>();
 
     @Override
     public void onEnable() {

@@ -32,12 +32,12 @@ public class Alpaca {
     private double quality;
     private double readiness;
 
-    private static char EMPTY_PROGRESS = '⬜';
-    private static char FULL_PROGRESS = '⬛';
+    private static final char EMPTY_PROGRESS = '⬜';
+    private static final char FULL_PROGRESS = '⬛';
 
     private static BukkitTask BEHAVIOR_TASK = null;
 
-    private static HashMap<Material, Double> ACCEPTED_FOOD = new HashMap<Material, Double>() {{
+    private static final HashMap<Material, Double> ACCEPTED_FOOD = new HashMap<Material, Double>() {{
         put(Material.APPLE, 10.0);
         put(Material.CARROT, 8.0);
         put(Material.GRASS, 2.0);

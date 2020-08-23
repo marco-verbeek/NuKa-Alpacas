@@ -8,7 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 
 public class EventListener implements Listener {
-    private Main plugin;
+    private final Main plugin;
 
     public EventListener(Main plugin){
         this.plugin = plugin;

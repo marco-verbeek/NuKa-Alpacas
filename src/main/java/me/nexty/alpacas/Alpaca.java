@@ -11,6 +11,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -29,12 +30,14 @@ public class Alpaca {
     private Gender gender;
 
     private double hunger;
-    private double happiness;
-    private double quality;
-    private double readiness;
-
     private long lastFeed = -1;
     private double feedAmount = 0;
+
+    private double happiness;
+    private ArrayList<Double> prevHappiness = new ArrayList<>();
+
+    private double quality;
+    private double readiness;
 
     private static final char EMPTY_PROGRESS = '⬜';
     private static final char FULL_PROGRESS = '⬛';
@@ -155,6 +158,11 @@ public class Alpaca {
                     PLUGIN.getAlpacas().forEach(Alpaca::qualityBehavior);
                 }
 
+                // Every 12 hours, save happiness into prevHappinesses
+                if(cycle % 720 == 0){
+                    PLUGIN.getAlpacas().forEach(Alpaca::prevHappinessBehavior);
+                }
+
                 cycle += 5;
             }
         }.runTaskTimer(PLUGIN, 0, 5*60*20);
@@ -173,8 +181,15 @@ public class Alpaca {
                 }
 
                 if(cycle % 10 == 0){
+                    PLUGIN.getLogger().info("[Alpacas] 10 seconds have passed.");
+
                     PLUGIN.getAlpacas().forEach(Alpaca::happinessBehavior);
                     PLUGIN.getAlpacas().forEach(Alpaca::qualityBehavior);
+                }
+
+                if(cycle % 60 == 0){
+                    PLUGIN.getLogger().info("[Alpacas] A whole minute has passed. Saving previous happinesses");
+                    PLUGIN.getAlpacas().forEach(Alpaca::prevHappinessBehavior);
                 }
 
                 cycle++;
@@ -187,6 +202,7 @@ public class Alpaca {
         alpaca.addHunger(randomValue);
     }
 
+    // TODO: abstract these values in config.
     private static void happinessBehavior(Alpaca alpaca){
         double aloneFactor = -1.0;
         double familyValue = 0.1;
@@ -229,9 +245,29 @@ public class Alpaca {
             double readinessValue = 25;
             alpaca.addReadiness(readinessValue);
         } else {
-            // TODO: value depends on happiness and previous happinesses
-            alpaca.addQuality(12);
+            double happinessFactor = 0.1;
+            double prevHappyFactor = 0.05;
+
+            double qualityValue = 0;
+
+            String debug = "[QualityCheck] ";
+
+            qualityValue += happinessFactor * ((alpaca.getHappiness() - 50) / 100);
+            debug += String.format("currentHappiness -> %.2f * ((%.2f - 50) / 100) = %.2f | ", happinessFactor, alpaca.getHappiness(), happinessFactor * ((alpaca.getHappiness() - 50) / 100));
+
+            double avgFactor = (alpaca.getHappiness() >= alpaca.getPrevHappinessAvg()) ? 1 : 0;
+            qualityValue += prevHappyFactor * avgFactor;
+            debug += String.format("previousHappinesses -> %.2f * %.2f = %.2f | ", prevHappyFactor, avgFactor, prevHappyFactor * avgFactor);
+
+            debug += String.format("Total: %.2f", qualityValue);
+            PLUGIN.getLogger().info(debug);
+
+            alpaca.addQuality(qualityValue);
         }
+    }
+
+    private static void prevHappinessBehavior(Alpaca alpaca){
+        alpaca.addPrevHappiness(alpaca.getHappiness());
     }
 
     private static int getNearbyAlpacas(Alpaca alpaca) {
@@ -257,7 +293,8 @@ public class Alpaca {
 
     // TODO: abstract feed values to config
     public void feed(Material food){
-        if(this.feedAmount >= 12){
+        // TODO remove this debug false
+        if(this.feedAmount >= 12 && false){
             if((System.currentTimeMillis() - this.lastFeed) >= 8*60*60*1000) {
                 this.feedAmount = 0;
             } else return;
@@ -291,6 +328,7 @@ public class Alpaca {
     public void setEntity(Entity entity) { this.entity = entity; }
     public void setHunger(double hunger) { this.hunger = hunger; }
     public void setHappiness(double happiness) { this.happiness = happiness; }
+
     public void setReadiness(double readiness) { this.readiness = readiness; }
     public void setQuality(double quality) { this.quality = quality; }
 
@@ -306,6 +344,25 @@ public class Alpaca {
     private void addQuality(double value) {
         this.quality = Math.max(0, Math.min(100, this.quality + value));
     }
+
+    public void addPrevHappiness(double prevHappiness) {
+        this.prevHappiness.add(prevHappiness);
+
+        if(this.prevHappiness.size() >= 10)
+            this.prevHappiness.remove(0);
+    }
+
+    public double getPrevHappinessAvg() {
+        double avg = 0;
+
+        for(double d : this.prevHappiness)
+            avg += d;
+
+        avg /= this.prevHappiness.size();
+
+        return avg;
+    }
+
 
     public Entity getEntity() { return this.entity; }
     public Location getLocation() { return this.entity.getLocation(); }

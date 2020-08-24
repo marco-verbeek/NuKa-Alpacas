@@ -29,11 +29,14 @@ public class EventListener implements Listener {
         if(alpaca == null) return;
 
         Material heldItem = player.getInventory().getItemInMainHand().getType();
-        if(heldItem != null && Alpaca.isFood(heldItem))
+        if(Alpaca.isFood(heldItem))
             alpaca.feed(heldItem);
 
         player.sendMessage(String.format("Hunger: %.00f | Happy: %.00f | Ready: %.00f | Quality: %.00f", alpaca.getHunger(), alpaca.getHappiness(), alpaca.getReadiness(), alpaca.getQuality()));
 
         alpaca.refreshHologram();
+
+        // TODO: remove food item
+        // TODO: cancel "ride alpaca" event
     }
 }

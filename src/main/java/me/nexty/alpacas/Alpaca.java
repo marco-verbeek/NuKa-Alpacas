@@ -42,9 +42,9 @@ public class Alpaca {
     private static BukkitTask BEHAVIOR_TASK = null;
 
     private static final HashMap<Material, Double> ACCEPTED_FOOD = new HashMap<Material, Double>() {{
-        put(Material.APPLE, 10.0);
-        put(Material.CARROT, 8.0);
-        put(Material.GRASS, 2.0);
+        put(Material.APPLE, 5.0);
+        put(Material.CARROT, 2.0);
+        put(Material.GRASS, 0.5);
     }};
 
     public Alpaca(Entity entity, String name, Gender gender){

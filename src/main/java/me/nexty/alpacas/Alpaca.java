@@ -84,13 +84,13 @@ public class Alpaca {
 
         this.hologram.clearLines();
         this.hologram.insertTextLine(0, ChatColor.translateAlternateColorCodes('&', String.format("&b%s &f(&7%c&f)", this.name, this.gender.getAbrv())));
-        this.hologram.insertTextLine(1, ChatColor.translateAlternateColorCodes('&', String.format("&6%s (%.00f)", formatProgress(this.happiness), this.happiness)));
+        this.hologram.insertTextLine(1, ChatColor.translateAlternateColorCodes('&', String.format("&6%s &f(&o%.2f)", formatProgress(this.happiness), this.happiness)));
 
         String readyOrQuality;
         if(readiness == 100)
-            readyOrQuality = String.format("&b%s (%.00f)", formatProgress(this.quality), this.quality);
+            readyOrQuality = String.format("&b%s (&o%.2f)", formatProgress(this.quality), this.quality);
         else
-            readyOrQuality = String.format("&f%s (%.00f)", formatProgress(this.readiness), this.readiness);
+            readyOrQuality = String.format("&f%s (&o%.2f)", formatProgress(this.readiness), this.readiness);
 
         this.hologram.insertTextLine(2, ChatColor.translateAlternateColorCodes('&', readyOrQuality));
 
@@ -145,14 +145,14 @@ public class Alpaca {
             public void run() {
                 // Every half hour, make alpacas lose between 0.3 and 0.5 hunger
                 if(cycle % 6 == 0){
-                    PLUGIN.getLogger().info("[Alpacas] Half an hour has passed. Updating hunger.");
+                    PLUGIN.getLogger().info("[Alpacas] Half an hour has passed.");
 
                     PLUGIN.getAlpacas().forEach(Alpaca::hungerBehavior);
                 }
 
                 // Every 10 minutes, update HAPPINESS and READINESS/QUALITY depending on hunger, hasMusic, isAlone
                 if(cycle % 10 == 0){
-                    PLUGIN.getLogger().info("[Alpacas] 10 minutes have passed. Updating happiness and quality.");
+                    PLUGIN.getLogger().info("[Alpacas] 10 minutes have passed.");
 
                     PLUGIN.getAlpacas().forEach(Alpaca::happinessBehavior);
                     PLUGIN.getAlpacas().forEach(Alpaca::qualityBehavior);
@@ -207,34 +207,34 @@ public class Alpaca {
         double aloneFactor = -1.0;
         double familyValue = 0.1;
         double hungerFactor = 0.25;
-        double musicFactor = 0.20;
+        double musicFactor = 0.1;
 
         double happyValue = 0;
 
-        String debug = "";
+        String debug = "[Happiness] ";
 
         int nearbyAlpacas = getNearbyAlpacas(alpaca);
         if(nearbyAlpacas <= 0){
             happyValue += aloneFactor;
-            debug += String.format("Family of %d -> %.00f | ", nearbyAlpacas, aloneFactor);
+            debug += String.format("Family of %d -> %.2f | ", nearbyAlpacas, aloneFactor);
         } else {
             happyValue += nearbyAlpacas * familyValue;
-            debug += String.format("Family of %d -> %.00f | ", nearbyAlpacas, nearbyAlpacas * familyValue);
+            debug += String.format("Family of %d -> %.2f | ", nearbyAlpacas, nearbyAlpacas * familyValue);
         }
 
         if(isMusicPlaying(alpaca)) happyValue += musicFactor;
         debug += String.format("Music: %b | ", isMusicPlaying(alpaca));
 
         if(alpaca.getHunger() <= 12){
-            happyValue -= (1.2 - (alpaca.getHunger() / 10)) * hungerFactor;
-            debug += String.format("Hunger: %.00f | ", (1.2 - (alpaca.getHunger() / 10)) * hungerFactor);
+            happyValue -= ((alpaca.getHunger() / 10) - 1.2) * hungerFactor;
+            debug += String.format("Hunger: %.2f | ", ((alpaca.getHunger() / 10) - 1.2) * hungerFactor);
         } else {
             happyValue += ((alpaca.getHunger() / 10) * hungerFactor) * 0.5;
-            debug += String.format("Hunger was %.00f -> %.00f | ", alpaca.getHunger(), (alpaca.getHunger() / 10) * hungerFactor);
+            debug += String.format("Hunger was %.2f -> %.2f | ", alpaca.getHunger(), ((alpaca.getHunger() / 10) * hungerFactor) * 0.5);
         }
 
         debug += String.format("Total: %f | ", happyValue);
-        debug += String.format("%.00f + %.00f = %.00f", alpaca.getHappiness(), happyValue, alpaca.getHappiness() + happyValue);
+        debug += String.format("%.2f + %.2f = %.2f", alpaca.getHappiness(), happyValue, alpaca.getHappiness() + happyValue);
         PLUGIN.getLogger().info(debug);
 
         alpaca.addHappiness(happyValue);

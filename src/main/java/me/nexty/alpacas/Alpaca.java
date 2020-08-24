@@ -245,7 +245,7 @@ public class Alpaca {
         for(int x = centerLoc.getBlockX() - radius; x <= centerLoc.getBlockX() + radius; x++)
             for(int y = centerLoc.getBlockY() - radius; y <= centerLoc.getBlockY() + radius; y++)
                 for(int z = centerLoc.getBlockZ() - radius; z <= centerLoc.getBlockZ() + radius; z++)
-                    if(centerLoc.getWorld().getBlockAt(x, y, z).getType() == Material.JUKEBOX && ((Jukebox) centerLoc.getWorld().getBlockAt(x, y, z)).isPlaying())
+                    if(centerLoc.getWorld().getBlockAt(x, y, z).getType() == Material.JUKEBOX && ((Jukebox) centerLoc.getWorld().getBlockAt(x, y, z).getState()).isPlaying())
                         return true;
 
         return false;

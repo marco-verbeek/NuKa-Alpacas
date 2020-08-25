@@ -203,7 +203,6 @@ public class Alpaca {
         alpaca.addHunger(randomValue);
     }
 
-    // TODO: abstract these values in config.
     private static void happinessBehavior(Alpaca alpaca){
         double aloneFactor = PLUGIN.getConfig().getDouble("alpaca-behavior.alone-factor", -1.0);
         double familyValue = PLUGIN.getConfig().getDouble("alpaca-behavior.family-factor", 0.1);
@@ -310,10 +309,8 @@ public class Alpaca {
         return ACCEPTED_FOOD.get(material) != null;
     }
 
-    // TODO: abstract feed values to config
     public void feed(Material food){
-        // TODO remove this debug false
-        if(this.feedAmount >= PLUGIN.getConfig().getDouble("alpaca-behavior.feed-amount", 12) && false){
+        if(this.feedAmount >= PLUGIN.getConfig().getDouble("alpaca-behavior.feed-amount", 12) && PLUGIN.DEBUG){
             if((System.currentTimeMillis() - this.lastFeed) >= PLUGIN.getConfig().getDouble("alpaca-behavior.feed-delay", 8)*60*60*1000) {
                 this.feedAmount = 0;
             } else return;

@@ -45,9 +45,17 @@ public class Alpaca {
     private static BukkitTask BEHAVIOR_TASK = null;
 
     private static final HashMap<Material, Double> ACCEPTED_FOOD = new HashMap<Material, Double>() {{
-        put(Material.APPLE, 5.0);
-        put(Material.CARROT, 2.0);
-        put(Material.GRASS, 0.5);
+        for(String food : PLUGIN.getConfig().getStringList("alpaca-behavior.food")){
+            String[] data = food.split(" ");
+
+            try {
+                put(Material.valueOf(data[0]), Double.parseDouble(data[1]));
+
+                if(PLUGIN.DEBUG) PLUGIN.getLogger().info(String.format("[Alpacas] Added food item '%s'", food));
+            } catch (IllegalArgumentException ex){
+                PLUGIN.getLogger().severe(String.format("[Alpacas] Could not add food item '%s'", food));
+            }
+        }
     }};
 
     public Alpaca(Entity entity, String name, Gender gender){
@@ -56,10 +64,10 @@ public class Alpaca {
         this.name = name;
         this.gender = gender;
 
-        this.hunger = 6*12;
-        this.happiness = 4*12;
-        this.quality = 0;
-        this.readiness = 12;
+        this.hunger = PLUGIN.getConfig().getDouble("alpaca-behavior.starting-hunger", 6*12);
+        this.happiness = PLUGIN.getConfig().getDouble("alpaca-behavior.starting-happiness", 4*12);
+        this.readiness = PLUGIN.getConfig().getDouble("alpaca-behavior.starting-readiness", 12);
+        this.quality = PLUGIN.getConfig().getDouble("alpaca-behavior.starting-quality", 0);
     }
 
     /**
@@ -198,16 +206,21 @@ public class Alpaca {
     }
 
     private static void hungerBehavior(Alpaca alpaca){
-        double randomValue = ThreadLocalRandom.current().nextDouble(0.30, 0.51) * -1;
+        double min = PLUGIN.getConfig().getDouble("alpaca-behavior.min-hunger-value", 0.6);
+        double max = PLUGIN.getConfig().getDouble("alpaca-behavior.max-hunger-value", 1.0);
+
+        // This random Value is divided by two because this method is called twice per hour.
+        double randomValue = (ThreadLocalRandom.current().nextDouble(min, max) /2) * -1;
+
         alpaca.addHunger(randomValue);
     }
 
     // TODO: abstract these values in config.
     private static void happinessBehavior(Alpaca alpaca){
-        double aloneFactor = -1.0;
-        double familyValue = 0.1;
-        double hungerFactor = 0.25;
-        double musicFactor = 0.1;
+        double aloneFactor = PLUGIN.getConfig().getDouble("alpaca-behavior.alone-factor", -1.0);
+        double familyValue = PLUGIN.getConfig().getDouble("alpaca-behavior.family-factor", 0.1);
+        double hungerFactor = PLUGIN.getConfig().getDouble("alpaca-behavior.hunger-factor", 0.25);
+        double musicFactor = PLUGIN.getConfig().getDouble("alpaca-behavior.music-factor", 0.1);
 
         double happyValue = 0;
 
@@ -242,11 +255,11 @@ public class Alpaca {
 
     private static void qualityBehavior(Alpaca alpaca){
         if(!alpaca.isReady()){
-            double readinessValue = 25;
+            double readinessValue = PLUGIN.getConfig().getDouble("alpaca-behavior.readiness-factor", 25);
             alpaca.addReadiness(readinessValue);
         } else {
-            double happinessFactor = 0.1;
-            double prevHappyFactor = 0.05;
+            double happinessFactor = PLUGIN.getConfig().getDouble("alpaca-behavior.happiness-factor", 0.1);
+            double prevHappyFactor = PLUGIN.getConfig().getDouble("alpaca-behavior.prev-happiness-factor", 0.05);
 
             double qualityValue = 0;
 
@@ -294,8 +307,8 @@ public class Alpaca {
     // TODO: abstract feed values to config
     public void feed(Material food){
         // TODO remove this debug false
-        if(this.feedAmount >= 12 && false){
-            if((System.currentTimeMillis() - this.lastFeed) >= 8*60*60*1000) {
+        if(this.feedAmount >= PLUGIN.getConfig().getDouble("alpaca-behavior.feed-amount", 12) && false){
+            if((System.currentTimeMillis() - this.lastFeed) >= PLUGIN.getConfig().getDouble("alpaca-behavior.feed-delay", 8)*60*60*1000) {
                 this.feedAmount = 0;
             } else return;
         }

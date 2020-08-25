@@ -2,12 +2,26 @@
 # Author: Nexty6
 # Date: 26/08/20
 
+debug: true                     # TODO
+
 alpaca-behavior:
+    starting-hunger: 72.0       # TODO
+    starting-happiness: 48.0    # TODO
+    starting-readiness: 12.0    # TODO
+    starting-quality: 0.0       # TODO
+
     alone-factor: -1.0          # TODO
     family-factor: 0.1          # TODO
     hunger-factor: 0.25         # TODO
     music-factor: 0.1           # TODO
 
+    happiness-factor: 0.1       # TODO
+    prev-happiness-factor: 0.05 # TODO
+
+    readiness-factor: 25.0      # TODO
+
+    min-hunger-value: 0.6       # Minimum hunger an Alpaca loses (per hour, inclusive)
+    max-hunger-value: 1.0       # Maximum hunger an Alpaca loses (per hour, exclusive)
     feed-delay: 8.0             # Cooldown between feeding an Alpaca (in hours)
     feed-amount: 12.0           # Maximum amount an Alpaca can eat before activating the feed-delay
     food:                       # Materials that can be eaten by an Alpaca, followed by their hunger value

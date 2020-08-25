@@ -15,14 +15,19 @@ import java.util.UUID;
 
 public class Main extends JavaPlugin {
     private final HashMap<UUID, Alpaca> alpacas = new HashMap<>();
+    public final boolean DEBUG = this.getConfig().getBoolean("debug", false);
 
     @Override
     public void onEnable() {
         this.getServer().getPluginManager().registerEvents(new EventListener(this), this);
+        this.saveDefaultConfig();
 
         Alpaca.setPlugin(this);
-        //Alpaca.startBehavior();
-        Alpaca.startTestingBehavior();
+
+        if(this.DEBUG)
+            Alpaca.startTestingBehavior();
+        else
+            Alpaca.startBehavior();
 
         if (!Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays")) {
             getLogger().severe("*** HolographicDisplays is not installed or not enabled. ***");
@@ -30,8 +35,6 @@ public class Main extends JavaPlugin {
             this.setEnabled(false);
             return;
         }
-
-        this.saveDefaultConfig();
 
         // TODO: get all Alpacas, add them to HashMap
     }

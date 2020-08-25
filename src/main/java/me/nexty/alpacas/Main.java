@@ -31,6 +31,8 @@ public class Main extends JavaPlugin {
             return;
         }
 
+        this.saveDefaultConfig();
+
         // TODO: get all Alpacas, add them to HashMap
     }
 

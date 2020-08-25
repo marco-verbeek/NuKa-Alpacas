@@ -23,6 +23,7 @@ public class Main extends JavaPlugin {
         this.saveDefaultConfig();
 
         Alpaca.setPlugin(this);
+        Alpaca.loadFoodValues();
 
         if(this.DEBUG)
             Alpaca.startTestingBehavior();

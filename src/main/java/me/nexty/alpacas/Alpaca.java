@@ -44,19 +44,7 @@ public class Alpaca {
 
     private static BukkitTask BEHAVIOR_TASK = null;
 
-    private static final HashMap<Material, Double> ACCEPTED_FOOD = new HashMap<Material, Double>() {{
-        for(String food : PLUGIN.getConfig().getStringList("alpaca-behavior.food")){
-            String[] data = food.split(" ");
-
-            try {
-                put(Material.valueOf(data[0]), Double.parseDouble(data[1]));
-
-                if(PLUGIN.DEBUG) PLUGIN.getLogger().info(String.format("[Alpacas] Added food item '%s'", food));
-            } catch (IllegalArgumentException ex){
-                PLUGIN.getLogger().severe(String.format("[Alpacas] Could not add food item '%s'", food));
-            }
-        }
-    }};
+    private static HashMap<Material, Double> ACCEPTED_FOOD;
 
     public Alpaca(Entity entity, String name, Gender gender){
         this.entity = entity;
@@ -298,6 +286,24 @@ public class Alpaca {
                         return true;
 
         return false;
+    }
+
+    public static void loadFoodValues() {
+        if(ACCEPTED_FOOD != null) return;
+
+        ACCEPTED_FOOD = new HashMap<Material, Double>() {{
+            for(String food : PLUGIN.getConfig().getStringList("alpaca-behavior.food")){
+                String[] data = food.split(" ");
+
+                try {
+                    put(Material.valueOf(data[0]), Double.parseDouble(data[1]));
+
+                    if(PLUGIN.DEBUG) PLUGIN.getLogger().info(String.format("[Alpacas] Added food item '%s'", food));
+                } catch (IllegalArgumentException ex){
+                    PLUGIN.getLogger().severe(String.format("[Alpacas] Could not add food item '%s'", food));
+                }
+            }
+        }};
     }
 
     public static boolean isFood(Material material){

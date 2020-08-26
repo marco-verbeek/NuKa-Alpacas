@@ -105,12 +105,14 @@ public class Alpaca {
         if(this.hologram == null) return false;
         hologramShown = true;
 
+        final double displayTime = PLUGIN.getConfig().getDouble("holo-display-time", 5);
+
         new BukkitRunnable(){
             int time = 0;
 
             @Override
             public void run() {
-                if(time >= 5*20){
+                if(time >= displayTime*20){
                     hologram.delete();
                     hologram = null;
                     hologramShown = false;
@@ -207,34 +209,36 @@ public class Alpaca {
     }
 
     private static void happinessBehavior(Alpaca alpaca){
-        double aloneFactor = PLUGIN.getConfig().getDouble("alpaca-behavior.alone-factor", -1.0);
-        double familyValue = PLUGIN.getConfig().getDouble("alpaca-behavior.family-factor", 0.1);
-        double hungerFactor = PLUGIN.getConfig().getDouble("alpaca-behavior.hunger-factor", 0.25);
-        double musicFactor = PLUGIN.getConfig().getDouble("alpaca-behavior.music-factor", 0.1);
+        // These values are divided by six because this method is called six times per hour.
+        double aloneFactor = PLUGIN.getConfig().getDouble("alpaca-behavior.alone-factor", -6.0) / 6;
+        double familyValue = PLUGIN.getConfig().getDouble("alpaca-behavior.family-factor", 0.6) / 6;
+        double hungerFactor = PLUGIN.getConfig().getDouble("alpaca-behavior.hunger-factor", 1.5) / 6;
+        double musicFactor = PLUGIN.getConfig().getDouble("alpaca-behavior.music-factor", 0.6) / 6;
 
         double happyValue = 0;
 
         Logger logger = new Logger(PLUGIN);
         logger.write("[Happiness]");
+        logger.write(alpaca.getName());
 
         int nearbyAlpacas = getNearbyAlpacas(alpaca);
         if(nearbyAlpacas <= 0){
             happyValue += aloneFactor;
-            logger.write(String.format("Family of %d -> %.2f |", nearbyAlpacas, aloneFactor));
+            logger.write(String.format("Alone -> %.2f |", aloneFactor));
         } else {
             happyValue += nearbyAlpacas * familyValue;
             logger.write(String.format("Family of %d -> %.2f |", nearbyAlpacas, nearbyAlpacas * familyValue));
         }
 
         if(isMusicPlaying(alpaca)) happyValue += musicFactor;
-        logger.write(String.format("Music: %b | ", isMusicPlaying(alpaca)));
+        logger.write(String.format("Music: %b -> %.2f | ", isMusicPlaying(alpaca), musicFactor));
 
         if(alpaca.getHunger() <= 12){
             happyValue -= ((alpaca.getHunger() / 10) - 1.2) * hungerFactor;
-            logger.write(String.format("Hunger: %.2f |", ((alpaca.getHunger() / 10) - 1.2) * hungerFactor));
+            logger.write(String.format("Hunger is %.2f -> %.2f |", alpaca.getHunger(), ((alpaca.getHunger() / 10) - 1.2) * hungerFactor));
         } else {
             happyValue += ((alpaca.getHunger() / 10) * hungerFactor) * 0.5;
-            logger.write(String.format("Hunger was %.2f -> %.2f |", alpaca.getHunger(), ((alpaca.getHunger() / 10) * hungerFactor) * 0.5));
+            logger.write(String.format("Hunger is %.2f -> %.2f |", alpaca.getHunger(), ((alpaca.getHunger() / 10) * hungerFactor) * 0.5));
         }
 
         logger.write(String.format("Total: %f |", happyValue));
@@ -246,16 +250,17 @@ public class Alpaca {
 
     private static void qualityBehavior(Alpaca alpaca){
         if(!alpaca.isReady()){
-            double readinessValue = PLUGIN.getConfig().getDouble("alpaca-behavior.readiness-factor", 25);
+            double readinessValue = PLUGIN.getConfig().getDouble("alpaca-behavior.readiness-factor", 25) / 6;
             alpaca.addReadiness(readinessValue);
         } else {
-            double happinessFactor = PLUGIN.getConfig().getDouble("alpaca-behavior.happiness-factor", 0.1);
-            double prevHappyFactor = PLUGIN.getConfig().getDouble("alpaca-behavior.prev-happiness-factor", 0.05);
+            double happinessFactor = PLUGIN.getConfig().getDouble("alpaca-behavior.happiness-factor", 0.6) / 6;
+            double prevHappyFactor = PLUGIN.getConfig().getDouble("alpaca-behavior.prev-happiness-factor", 0.3) / 6;
 
             double qualityValue = 0;
 
             Logger logger = new Logger(PLUGIN);
             logger.write("[QualityCheck]");
+            logger.write(alpaca.getName());
 
             qualityValue += happinessFactor * ((alpaca.getHappiness() - 50) / 100);
             logger.write(String.format("currentHappiness -> %.2f * ((%.2f - 50) / 100) = %.2f | ", happinessFactor, alpaca.getHappiness(), happinessFactor * ((alpaca.getHappiness() - 50) / 100)));
@@ -388,6 +393,7 @@ public class Alpaca {
 
     public Entity getEntity() { return this.entity; }
     public Location getLocation() { return this.entity.getLocation(); }
+    public String getName() { return this.name; }
     public double getHunger() { return this.hunger; }
     public double getHappiness() { return this.happiness; }
     public double getQuality() { return this.quality; }

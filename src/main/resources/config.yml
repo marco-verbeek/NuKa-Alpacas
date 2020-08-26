@@ -2,7 +2,9 @@
 # Author: Nexty6
 # Date: 26/08/20
 
-debug: true                     # Turn this one if you'd like to get a lot of information in the console. (for developpers)
+debug: true                     # Turn this one if you'd like to get a lot of information in the console + in-game. (for developpers)
+
+holo-display-time: 10           # How long an Alpaca's Hologram stays active after an interaction (in seconds)
 
 alpaca-behavior:
     starting-hunger: 72.0       # The initial hunger of an Alpaca (in %, more means less hungry)
@@ -10,13 +12,13 @@ alpaca-behavior:
     starting-readiness: 12.0    # The initial readiness of an Alpaca (in %, more means closer to being able to get its wool harvested)
     starting-quality: 0.0       # The initial wool quality of an Alpaca (in %, more means better quality)
 
-    alone-factor: -1.0          # TODO
-    family-factor: 0.1          # TODO
-    hunger-factor: 0.25         # TODO
-    music-factor: 0.1           # TODO
+    alone-factor: -6.0          # Value subtracted from an Alpaca's Happiness in case there are NO other Alpacas nearby. (per hour)
+    family-factor: 0.6          # Value added to an Alpaca's Happiness in case there ARE other Alpacas nearby. (per nearby Alpaca, per hour)
+    hunger-factor: 1.5          # TODO
+    music-factor: 0.6           # TODO
 
-    happiness-factor: 0.1       # TODO
-    prev-happiness-factor: 0.05 # TODO
+    happiness-factor: 0.6       # TODO
+    prev-happiness-factor: 0.3  # TODO
 
     readiness-factor: 25.0      # TODO
 

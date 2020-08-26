@@ -33,7 +33,8 @@ public class EventListener implements Listener {
         if(Alpaca.isFood(heldItem.getType()))
             alpaca.feed(heldItem);
 
-        player.sendMessage(String.format("Hunger: %.00f | Happy: %.00f | Ready: %.00f | Quality: %.00f", alpaca.getHunger(), alpaca.getHappiness(), alpaca.getReadiness(), alpaca.getQuality()));
+        if(this.plugin.DEBUG)
+            player.sendMessage(String.format("Hunger: %.00f | Happy: %.00f | Ready: %.00f | Quality: %.00f", alpaca.getHunger(), alpaca.getHappiness(), alpaca.getReadiness(), alpaca.getQuality()));
 
         alpaca.refreshHologram();
     }

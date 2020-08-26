@@ -2,13 +2,13 @@
 # Author: Nexty6
 # Date: 26/08/20
 
-debug: true                     # TODO
+debug: true                     # Turn this one if you'd like to get a lot of information in the console. (for developpers)
 
 alpaca-behavior:
-    starting-hunger: 72.0       # TODO
-    starting-happiness: 48.0    # TODO
-    starting-readiness: 12.0    # TODO
-    starting-quality: 0.0       # TODO
+    starting-hunger: 72.0       # The initial hunger of an Alpaca (in %, more means less hungry)
+    starting-happiness: 48.0    # The initial happiness of an Alpaca (in %, more means happier)
+    starting-readiness: 12.0    # The initial readiness of an Alpaca (in %, more means closer to being able to get its wool harvested)
+    starting-quality: 0.0       # The initial wool quality of an Alpaca (in %, more means better quality)
 
     alone-factor: -1.0          # TODO
     family-factor: 0.1          # TODO

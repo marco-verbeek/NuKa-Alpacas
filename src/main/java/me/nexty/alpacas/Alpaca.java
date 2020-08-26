@@ -234,7 +234,7 @@ public class Alpaca {
         logger.write(String.format("Music: %b -> %.2f | ", isMusicPlaying(alpaca), isMusicPlaying(alpaca) ? musicFactor : 0));
 
         if(alpaca.getHunger() <= 12){
-            happyValue -= ((alpaca.getHunger() / 10) - 1.2) * hungerFactor;
+            happyValue += ((alpaca.getHunger() / 10) - 1.2) * hungerFactor;
             logger.write(String.format("Hunger is %.2f -> %.2f |", alpaca.getHunger(), ((alpaca.getHunger() / 10) - 1.2) * hungerFactor));
         } else {
             happyValue += ((alpaca.getHunger() / 10) * hungerFactor) * 0.5;

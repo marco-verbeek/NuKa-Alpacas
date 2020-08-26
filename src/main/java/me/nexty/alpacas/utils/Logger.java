@@ -6,7 +6,7 @@ import java.util.logging.Level;
 
 public class Logger {
     private Main plugin;
-    private String buffer;
+    private String buffer = "";
 
     public Logger(Main plugin){
         this.plugin = plugin;

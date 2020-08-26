@@ -6,6 +6,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -37,9 +38,8 @@ public class EventListener implements Listener {
         this.plugin = plugin;
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
-        if (event == null) return;
         if(event.getRightClicked().getType() != EntityType.LLAMA) return;
 
         Entity entity = event.getRightClicked();
@@ -60,26 +60,26 @@ public class EventListener implements Listener {
         alpaca.refreshHologram();
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onEntityMount(EntityMountEvent event){
-        if(event == null) return;
-
         if(!event.getMount().hasMetadata("NUKA_ALPACA")) return;
 
         // Cannot mount an Alpaca
         event.setCancelled(true);
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerInteract(PlayerInteractEvent event){
-        if(event == null) return;
-
-        if(event.getClickedBlock().getType() != Material.JUKEBOX) return;
+        if(event.getClickedBlock() instanceof Jukebox) return;
 
         Material held = event.getPlayer().getInventory().getItemInMainHand().getType();
         if(!DISKS.contains(held)) return;
 
-        Jukebox jukebox = (Jukebox) event.getClickedBlock();
-        jukebox.setMetadata("NUKA_PLAYING", new FixedMetadataValue(this.plugin, System.currentTimeMillis()));
+        try {
+            Jukebox jukebox = (Jukebox) event.getClickedBlock().getState();
+            jukebox.setMetadata("NUKA_PLAYING", new FixedMetadataValue(this.plugin, System.currentTimeMillis()));
+        } catch (NullPointerException ex){
+            this.plugin.getLogger().severe("[Alpacas] NullPointerException during metadata setting.");
+        }
     }
 }

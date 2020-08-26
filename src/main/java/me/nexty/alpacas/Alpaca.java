@@ -231,7 +231,7 @@ public class Alpaca {
         }
 
         if(isMusicPlaying(alpaca)) happyValue += musicFactor;
-        logger.write(String.format("Music: %b -> %.2f | ", isMusicPlaying(alpaca), musicFactor));
+        logger.write(String.format("Music: %b -> %.2f | ", isMusicPlaying(alpaca), isMusicPlaying(alpaca) ? musicFactor : 0));
 
         if(alpaca.getHunger() <= 12){
             happyValue -= ((alpaca.getHunger() / 10) - 1.2) * hungerFactor;
@@ -262,8 +262,9 @@ public class Alpaca {
             logger.write("[QualityCheck]");
             logger.write(alpaca.getName());
 
-            qualityValue += happinessFactor * ((alpaca.getHappiness() - 50) / 100);
-            logger.write(String.format("currentHappiness -> %.2f * ((%.2f - 50) / 100) = %.2f | ", happinessFactor, alpaca.getHappiness(), happinessFactor * ((alpaca.getHappiness() - 50) / 100)));
+            // TODO: fix this value
+            qualityValue += happinessFactor * (alpaca.getHappiness() - 50);
+            logger.write(String.format("currentHappiness -> %.2f * (%.2f - 50) = %.2f | ", happinessFactor, alpaca.getHappiness(), happinessFactor * ((alpaca.getHappiness() - 50) / 100)));
 
             double avgFactor = (alpaca.getHappiness() >= alpaca.getPrevHappinessAvg()) ? 1 : 0;
             qualityValue += prevHappyFactor * avgFactor;

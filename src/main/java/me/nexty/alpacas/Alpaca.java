@@ -291,10 +291,20 @@ public class Alpaca {
         for(int x = centerLoc.getBlockX() - radius; x <= centerLoc.getBlockX() + radius; x++)
             for(int y = centerLoc.getBlockY() - radius; y <= centerLoc.getBlockY() + radius; y++)
                 for(int z = centerLoc.getBlockZ() - radius; z <= centerLoc.getBlockZ() + radius; z++)
-                    if(centerLoc.getWorld().getBlockAt(x, y, z).getType() == Material.JUKEBOX && ((Jukebox) centerLoc.getWorld().getBlockAt(x, y, z).getState()).isPlaying())
-                        return true;
+                    if(centerLoc.getWorld().getBlockAt(x, y, z).getType() == Material.JUKEBOX)
+                        return checkCurrentlyPlaying((Jukebox) centerLoc.getWorld().getBlockAt(x, y, z).getState());
 
         return false;
+    }
+
+    private static boolean checkCurrentlyPlaying(Jukebox jb){
+        if(!jb.isPlaying()) return false;
+        if(!jb.hasMetadata("NUKA_PLAYING")) return false;
+
+        long previousPlay = jb.getMetadata("NUKA_PLAYING").get(0).asLong();
+        long timeBetween = System.currentTimeMillis() - previousPlay;
+
+        return timeBetween <= PLUGIN.getConfig().getDouble("jukebox-play-time", 5)*60*1000;
     }
 
     public static void loadFoodValues() {

@@ -3,31 +3,51 @@
 # GitHub: https://github.com/marco-verbeek/NuKa-Alpacas
 # Issues: https://github.com/marco-verbeek/NuKa-Alpacas/issues/new
 
-debug: true                     # Turn this one if you'd like to get a lot of information in the console + in-game. (for developpers)
+# Turn this one if you'd like to get a lot of information in the console + in-game. (for developpers)
+debug: true
 
-holo-display-time: 10           # How long an Alpaca's Hologram stays active after an interaction (in seconds)
+# How long an Alpaca's Hologram stays active after an interaction (in seconds)
+holo-display-time: 10
+# How long a Jukebox is considered "playing" music after a player inserts a record (in minutes)
+jukebox-play-time: 5
 
 alpaca-behavior:
-    starting-hunger: 72.0       # The initial hunger of an Alpaca (in %, more means less hungry)
-    starting-happiness: 48.0    # The initial happiness of an Alpaca (in %, more means happier)
-    starting-readiness: 12.0    # The initial readiness of an Alpaca (in %, more means closer to being able to get its wool harvested)
-    starting-quality: 0.0       # The initial wool quality of an Alpaca (in %, more means better quality)
+    # The initial hunger of an Alpaca (in %, more means less hungry)
+    starting-hunger: 72.0
+    # The initial happiness of an Alpaca (in %, more means happier)
+    starting-happiness: 48.0
+    # The initial readiness of an Alpaca (in %, more means closer to being able to get its wool harvested)
+    starting-readiness: 12.0
+    # The initial wool quality of an Alpaca (in %, more means better quality)
+    starting-quality: 0.0
 
-    alone-factor: -6.0          # Value subtracted from an Alpaca's Happiness in case there are NO other Alpacas nearby. (per hour)
-    family-factor: 0.6          # Value added to an Alpaca's Happiness in case there ARE other Alpacas nearby. (per nearby Alpaca, per hour)
-    hunger-factor: 1.5          # Formula if Alpaca's hunger is <12 = ((alpaca.getHunger() / 10) - 1.2) * hungerFactor) || ((alpaca.getHunger() / 10) * hungerFactor) * 0.5
-    music-factor: 0.6           # Value added to an Alpaca's Happiness in case there is Music being played nearby. (per hour)
+    # Value subtracted from an Alpaca's Happiness in case there are NO other Alpacas nearby. (per hour)
+    alone-factor: -6.0
+    # Value added to an Alpaca's Happiness in case there ARE other Alpacas nearby. (per nearby Alpaca, per hour)
+    family-factor: 0.6
+    # Formula if Alpaca's hunger is <12 = ((alpaca.getHunger() / 10) - 1.2) * hungerFactor) || ((alpaca.getHunger() / 10) * hungerFactor) * 0.5
+    hunger-factor: 1.5
+    # Value added to an Alpaca's Happiness in case there is Music being played nearby. (per hour)
+    music-factor: 0.6
 
-    happiness-factor: 0.6       # Formula based on the Alpaca's Happiness: happinessFactor * ((alpaca.getHappiness() - 50) / 100) (per hour)
-    prev-happiness-factor: 0.3  # Value added to the Alpaca's Quality if its actual happiness is greater than or equal to the average of the past 3 days. (per hour)
+    # Formula based on the Alpaca's Happiness: happinessFactor * ((alpaca.getHappiness() - 50) / 100) (per hour)
+    happiness-factor: 0.6
+    # Value added to the Alpaca's Quality if its actual happiness is greater than or equal to the average of the past 3 days. (per hour)
+    prev-happiness-factor: 0.3
 
-    readiness-factor: 150.0     # Value added to an Alpaca's Readiness (per hour)
+    # Value added to an Alpaca's Readiness (per hour)
+    readiness-factor: 150.0
 
-    min-hunger-value: 0.6       # Minimum hunger an Alpaca loses (per hour, inclusive)
-    max-hunger-value: 1.0       # Maximum hunger an Alpaca loses (per hour, exclusive)
-    feed-delay: 8.0             # Cooldown between feeding an Alpaca (in hours)
-    feed-amount: 12.0           # Maximum amount an Alpaca can eat before activating the feed-delay
-    food:                       # Materials that can be eaten by an Alpaca, followed by their hunger value
+    # Minimum hunger an Alpaca loses (per hour, inclusive)
+    min-hunger-value: 0.6
+    # Maximum hunger an Alpaca loses (per hour, exclusive)
+    max-hunger-value: 1.0
+    # Cooldown between feeding an Alpaca (in hours)
+    feed-delay: 8.0
+    # Maximum amount an Alpaca can eat before activating the feed-delay
+    feed-amount: 12.0
+    # Materials that can be eaten by an Alpaca, followed by their hunger value
+    food:
         - APPLE 5.0
         - CARROT 2.0
         - GRASS 0.5

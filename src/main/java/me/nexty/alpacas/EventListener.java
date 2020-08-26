@@ -1,16 +1,37 @@
 package me.nexty.alpacas;
 
+import org.bukkit.Material;
+import org.bukkit.block.Jukebox;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.spigotmc.event.entity.EntityMountEvent;
+
+import java.util.ArrayList;
 
 public class EventListener implements Listener {
     private final Main plugin;
+    private static final ArrayList<Material> DISKS = new ArrayList<Material>() {{
+        add(Material.MUSIC_DISC_11);
+        add(Material.MUSIC_DISC_13);
+        add(Material.MUSIC_DISC_BLOCKS);
+        add(Material.MUSIC_DISC_CAT);
+        add(Material.MUSIC_DISC_CHIRP);
+        add(Material.MUSIC_DISC_FAR);
+        add(Material.MUSIC_DISC_MALL);
+        add(Material.MUSIC_DISC_MELLOHI);
+        add(Material.MUSIC_DISC_PIGSTEP);
+        add(Material.MUSIC_DISC_STAL);
+        add(Material.MUSIC_DISC_STRAD);
+        add(Material.MUSIC_DISC_WAIT);
+        add(Material.MUSIC_DISC_WARD);
+    }};
 
     public EventListener(Main plugin){
         this.plugin = plugin;
@@ -47,5 +68,18 @@ public class EventListener implements Listener {
 
         // Cannot mount an Alpaca
         event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onPlayerInteract(PlayerInteractEvent event){
+        if(event == null) return;
+
+        if(event.getClickedBlock().getType() != Material.JUKEBOX) return;
+
+        Material held = event.getPlayer().getInventory().getItemInMainHand().getType();
+        if(!DISKS.contains(held)) return;
+
+        Jukebox jukebox = (Jukebox) event.getClickedBlock();
+        jukebox.setMetadata("NUKA_PLAYING", new FixedMetadataValue(this.plugin, System.currentTimeMillis()));
     }
 }

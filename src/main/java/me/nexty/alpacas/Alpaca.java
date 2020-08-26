@@ -250,7 +250,7 @@ public class Alpaca {
 
     private static void qualityBehavior(Alpaca alpaca){
         if(!alpaca.isReady()){
-            double readinessValue = PLUGIN.getConfig().getDouble("alpaca-behavior.readiness-factor", 25) / 6;
+            double readinessValue = PLUGIN.getConfig().getDouble("alpaca-behavior.readiness-factor", 150) / 6;
             alpaca.addReadiness(readinessValue);
         } else {
             double happinessFactor = PLUGIN.getConfig().getDouble("alpaca-behavior.happiness-factor", 0.6) / 6;

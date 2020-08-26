@@ -15,13 +15,13 @@ alpaca-behavior:
 
     alone-factor: -6.0          # Value subtracted from an Alpaca's Happiness in case there are NO other Alpacas nearby. (per hour)
     family-factor: 0.6          # Value added to an Alpaca's Happiness in case there ARE other Alpacas nearby. (per nearby Alpaca, per hour)
-    hunger-factor: 1.5          # TODO
-    music-factor: 0.6           # TODO
+    hunger-factor: 1.5          # Formula if Alpaca's hunger is <12 = ((alpaca.getHunger() / 10) - 1.2) * hungerFactor) || ((alpaca.getHunger() / 10) * hungerFactor) * 0.5
+    music-factor: 0.6           # Value added to an Alpaca's Happiness in case there is Music being played nearby. (per hour)
 
-    happiness-factor: 0.6       # TODO
-    prev-happiness-factor: 0.3  # TODO
+    happiness-factor: 0.6       # Formula based on the Alpaca's Happiness: happinessFactor * ((alpaca.getHappiness() - 50) / 100) (per hour)
+    prev-happiness-factor: 0.3  # Value added to the Alpaca's Quality if its actual happiness is greater than or equal to the average of the past 3 days. (per hour)
 
-    readiness-factor: 25.0      # TODO
+    readiness-factor: 150.0     # Value added to an Alpaca's Readiness (per hour)
 
     min-hunger-value: 0.6       # Minimum hunger an Alpaca loses (per hour, inclusive)
     max-hunger-value: 1.0       # Maximum hunger an Alpaca loses (per hour, exclusive)

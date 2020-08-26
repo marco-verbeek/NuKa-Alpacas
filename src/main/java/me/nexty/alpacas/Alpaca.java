@@ -2,6 +2,7 @@ package me.nexty.alpacas;
 
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
+import me.nexty.alpacas.utils.Logger;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -14,6 +15,7 @@ import org.bukkit.scheduler.BukkitTask;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.logging.Level;
 
 public class Alpaca {
     // TODO: serialize in order to save it in yml
@@ -211,31 +213,32 @@ public class Alpaca {
 
         double happyValue = 0;
 
-        String debug = "[Happiness] ";
+        Logger logger = new Logger(PLUGIN);
+        logger.write("[Happiness]");
 
         int nearbyAlpacas = getNearbyAlpacas(alpaca);
         if(nearbyAlpacas <= 0){
             happyValue += aloneFactor;
-            debug += String.format("Family of %d -> %.2f | ", nearbyAlpacas, aloneFactor);
+            logger.write(String.format("Family of %d -> %.2f |", nearbyAlpacas, aloneFactor));
         } else {
             happyValue += nearbyAlpacas * familyValue;
-            debug += String.format("Family of %d -> %.2f | ", nearbyAlpacas, nearbyAlpacas * familyValue);
+            logger.write(String.format("Family of %d -> %.2f |", nearbyAlpacas, nearbyAlpacas * familyValue));
         }
 
         if(isMusicPlaying(alpaca)) happyValue += musicFactor;
-        debug += String.format("Music: %b | ", isMusicPlaying(alpaca));
+        logger.write(String.format("Music: %b | ", isMusicPlaying(alpaca)));
 
         if(alpaca.getHunger() <= 12){
             happyValue -= ((alpaca.getHunger() / 10) - 1.2) * hungerFactor;
-            debug += String.format("Hunger: %.2f | ", ((alpaca.getHunger() / 10) - 1.2) * hungerFactor);
+            logger.write(String.format("Hunger: %.2f |", ((alpaca.getHunger() / 10) - 1.2) * hungerFactor));
         } else {
             happyValue += ((alpaca.getHunger() / 10) * hungerFactor) * 0.5;
-            debug += String.format("Hunger was %.2f -> %.2f | ", alpaca.getHunger(), ((alpaca.getHunger() / 10) * hungerFactor) * 0.5);
+            logger.write(String.format("Hunger was %.2f -> %.2f |", alpaca.getHunger(), ((alpaca.getHunger() / 10) * hungerFactor) * 0.5));
         }
 
-        debug += String.format("Total: %f | ", happyValue);
-        debug += String.format("%.2f + %.2f = %.2f", alpaca.getHappiness(), happyValue, alpaca.getHappiness() + happyValue);
-        PLUGIN.getLogger().info(debug);
+        logger.write(String.format("Total: %f |", happyValue));
+        logger.write(String.format("%.2f + %.2f = %.2f", alpaca.getHappiness(), happyValue, alpaca.getHappiness() + happyValue));
+        logger.print(Level.INFO);
 
         alpaca.addHappiness(happyValue);
     }
@@ -250,17 +253,18 @@ public class Alpaca {
 
             double qualityValue = 0;
 
-            String debug = "[QualityCheck] ";
+            Logger logger = new Logger(PLUGIN);
+            logger.write("[QualityCheck]");
 
             qualityValue += happinessFactor * ((alpaca.getHappiness() - 50) / 100);
-            debug += String.format("currentHappiness -> %.2f * ((%.2f - 50) / 100) = %.2f | ", happinessFactor, alpaca.getHappiness(), happinessFactor * ((alpaca.getHappiness() - 50) / 100));
+            logger.write(String.format("currentHappiness -> %.2f * ((%.2f - 50) / 100) = %.2f | ", happinessFactor, alpaca.getHappiness(), happinessFactor * ((alpaca.getHappiness() - 50) / 100)));
 
             double avgFactor = (alpaca.getHappiness() >= alpaca.getPrevHappinessAvg()) ? 1 : 0;
             qualityValue += prevHappyFactor * avgFactor;
-            debug += String.format("previousHappinesses -> %.2f * %.2f = %.2f | ", prevHappyFactor, avgFactor, prevHappyFactor * avgFactor);
+            logger.write(String.format("previousHappinesses -> %.2f * %.2f = %.2f | ", prevHappyFactor, avgFactor, prevHappyFactor * avgFactor));
 
-            debug += String.format("Total: %.2f", qualityValue);
-            PLUGIN.getLogger().info(debug);
+            logger.write(String.format("Total: %.2f", qualityValue));
+            logger.print(Level.INFO);
 
             alpaca.addQuality(qualityValue);
         }

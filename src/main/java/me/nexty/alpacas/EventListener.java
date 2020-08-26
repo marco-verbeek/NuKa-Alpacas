@@ -1,12 +1,12 @@
 package me.nexty.alpacas;
 
-import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.inventory.ItemStack;
 
 public class EventListener implements Listener {
     private final Main plugin;
@@ -28,15 +28,14 @@ public class EventListener implements Listener {
         Alpaca alpaca = this.plugin.getAlpaca(entity.getUniqueId());
         if(alpaca == null) return;
 
-        Material heldItem = player.getInventory().getItemInMainHand().getType();
-        if(Alpaca.isFood(heldItem))
+        ItemStack heldItem = player.getInventory().getItemInMainHand();
+        if(Alpaca.isFood(heldItem.getType()))
             alpaca.feed(heldItem);
 
         player.sendMessage(String.format("Hunger: %.00f | Happy: %.00f | Ready: %.00f | Quality: %.00f", alpaca.getHunger(), alpaca.getHappiness(), alpaca.getReadiness(), alpaca.getQuality()));
 
         alpaca.refreshHologram();
 
-        // TODO: remove food item
         // TODO: cancel "ride alpaca" event
     }
 }

@@ -9,6 +9,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Jukebox;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -313,18 +314,19 @@ public class Alpaca {
         return ACCEPTED_FOOD.get(material) != null;
     }
 
-    public void feed(Material food){
+    public void feed(ItemStack food){
         if(this.feedAmount >= PLUGIN.getConfig().getDouble("alpaca-behavior.feed-amount", 12) && PLUGIN.DEBUG){
             if((System.currentTimeMillis() - this.lastFeed) >= PLUGIN.getConfig().getDouble("alpaca-behavior.feed-delay", 8)*60*60*1000) {
                 this.feedAmount = 0;
             } else return;
         }
 
-        double feedValue = ACCEPTED_FOOD.getOrDefault(food, 0.0);
+        double feedValue = ACCEPTED_FOOD.getOrDefault(food.getType(), 0.0);
 
         this.feedAmount += feedValue;
         this.lastFeed = System.currentTimeMillis();
 
+        food.setAmount(food.getAmount() - 1);
         this.addHunger(feedValue);
     }
 

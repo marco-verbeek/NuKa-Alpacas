@@ -320,7 +320,7 @@ public class Alpaca {
     }
 
     public void feed(ItemStack food){
-        if(this.feedAmount >= PLUGIN.getConfig().getDouble("alpaca-behavior.feed-amount", 12) && PLUGIN.DEBUG){
+        if(this.feedAmount >= PLUGIN.getConfig().getDouble("alpaca-behavior.feed-amount", 12) && !PLUGIN.DEBUG){
             if((System.currentTimeMillis() - this.lastFeed) >= PLUGIN.getConfig().getDouble("alpaca-behavior.feed-delay", 8)*60*60*1000) {
                 this.feedAmount = 0;
             } else return;

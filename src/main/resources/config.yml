@@ -1,6 +1,7 @@
-# Nuclear Alpaca Configuration file
-# Author: Nexty6
-# Date: 26/08/20
+# Nuclear Alpacas Configuration file
+#
+# GitHub: https://github.com/marco-verbeek/NuKa-Alpacas
+# Issues: https://github.com/marco-verbeek/NuKa-Alpacas/issues/new
 
 debug: true                     # Turn this one if you'd like to get a lot of information in the console + in-game. (for developpers)
 

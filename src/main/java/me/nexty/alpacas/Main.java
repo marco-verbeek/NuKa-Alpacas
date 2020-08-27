@@ -1,5 +1,6 @@
 package me.nexty.alpacas;
 
+import me.nexty.alpacas.utils.Conf;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -21,6 +22,8 @@ public class Main extends JavaPlugin {
     public void onEnable() {
         this.getServer().getPluginManager().registerEvents(new EventListener(this), this);
         this.saveDefaultConfig();
+
+        Conf.loadConfigValues(this.getConfig());
 
         Alpaca.setPlugin(this);
         Alpaca.loadFoodValues();

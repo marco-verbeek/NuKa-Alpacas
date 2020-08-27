@@ -11,6 +11,11 @@ holo-display-time: 10
 # How long a Jukebox is considered "playing" music after a player inserts a record (in minutes)
 jukebox-play-time: 5
 
+# Wool tier Happiness Requirements for level-up. (in %)
+wool-tier-1-req: 25
+wool-tier-2-req: 50
+wool-tier-3-req: 75
+
 alpaca-behavior:
     # The initial hunger of an Alpaca (in %, more means less hungry)
     starting-hunger: 72.0

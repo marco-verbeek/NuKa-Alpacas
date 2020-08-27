@@ -2,6 +2,7 @@ package me.nexty.alpacas;
 
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
+import me.nexty.alpacas.utils.Conf;
 import me.nexty.alpacas.utils.Logger;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -105,7 +106,7 @@ public class Alpaca {
         if(this.hologram == null) return false;
         hologramShown = true;
 
-        final double displayTime = PLUGIN.getConfig().getDouble("holo-display-time", 5);
+        final double displayTime = Conf.holoDisplayTime; //PLUGIN.getConfig().getDouble("holo-display-time", 5);
 
         new BukkitRunnable(){
             int time = 0;
@@ -199,8 +200,8 @@ public class Alpaca {
     }
 
     private static void hungerBehavior(Alpaca alpaca){
-        double min = PLUGIN.getConfig().getDouble("alpaca-behavior.min-hunger-value", 0.6);
-        double max = PLUGIN.getConfig().getDouble("alpaca-behavior.max-hunger-value", 1.0);
+        double min = Conf.minHungerLoss; // PLUGIN.getConfig().getDouble("alpaca-behavior.min-hunger-value", 0.6);
+        double max = Conf.maxHungerLoss; //PLUGIN.getConfig().getDouble("alpaca-behavior.max-hunger-value", 1.0);
 
         // This random Value is divided by two because this method is called twice per hour.
         double randomValue = (ThreadLocalRandom.current().nextDouble(min, max) /2) * -1;
@@ -208,12 +209,13 @@ public class Alpaca {
         alpaca.addHunger(randomValue);
     }
 
+    // TODO: clean these values, stupid to take memory space if already taking it
     private static void happinessBehavior(Alpaca alpaca){
         // These values are divided by six because this method is called six times per hour.
-        double aloneFactor = PLUGIN.getConfig().getDouble("alpaca-behavior.alone-factor", -6.0) / 6;
-        double familyValue = PLUGIN.getConfig().getDouble("alpaca-behavior.family-factor", 0.6) / 6;
-        double hungerFactor = PLUGIN.getConfig().getDouble("alpaca-behavior.hunger-factor", 1.5) / 6;
-        double musicFactor = PLUGIN.getConfig().getDouble("alpaca-behavior.music-factor", 0.6) / 6;
+        double aloneFactor = Conf.aloneFactor; //PLUGIN.getConfig().getDouble("alpaca-behavior.alone-factor", -6.0) / 6;
+        double familyValue = Conf.familyValue; //PLUGIN.getConfig().getDouble("alpaca-behavior.family-factor", 0.6) / 6;
+        double hungerFactor = Conf.hungerFactor; //PLUGIN.getConfig().getDouble("alpaca-behavior.hunger-factor", 1.5) / 6;
+        double musicFactor = Conf.musicFactor; //PLUGIN.getConfig().getDouble("alpaca-behavior.music-factor", 0.6) / 6;
 
         double happyValue = 0;
 
@@ -250,11 +252,11 @@ public class Alpaca {
 
     private static void qualityBehavior(Alpaca alpaca){
         if(!alpaca.isReady()){
-            double readinessValue = PLUGIN.getConfig().getDouble("alpaca-behavior.readiness-factor", 150) / 6;
+            double readinessValue = Conf.readinessValue; //PLUGIN.getConfig().getDouble("alpaca-behavior.readiness-factor", 150) / 6;
             alpaca.addReadiness(readinessValue);
         } else {
-            double happinessFactor = PLUGIN.getConfig().getDouble("alpaca-behavior.happiness-factor", 0.6) / 6;
-            double prevHappyFactor = PLUGIN.getConfig().getDouble("alpaca-behavior.prev-happiness-factor", 0.3) / 6;
+            double happinessFactor = Conf.happinessFactor; //PLUGIN.getConfig().getDouble("alpaca-behavior.happiness-factor", 0.6) / 6;
+            double prevHappyFactor = Conf.prevHappyFactor; //PLUGIN.getConfig().getDouble("alpaca-behavior.prev-happiness-factor", 0.3) / 6;
 
             double qualityValue = 0;
 
@@ -262,9 +264,12 @@ public class Alpaca {
             logger.write("[QualityCheck]");
             logger.write(alpaca.getName());
 
-            // TODO: fix this value
-            qualityValue += happinessFactor * (alpaca.getHappiness() - 50);
-            logger.write(String.format("currentHappiness -> %.2f * (%.2f - 50) = %.2f | ", happinessFactor, alpaca.getHappiness(), happinessFactor * ((alpaca.getHappiness() - 50) / 100)));
+            // TODO: how higher you get, how difficult it is to gain quality? set values in config
+            boolean canProduceHigherTierWool = canProduceHigherTierWool(alpaca);
+            if(canProduceHigherTierWool)
+                qualityValue += happinessFactor;
+
+            logger.write(String.format("canProduceHigherTierWool: %b -> %.2f", canProduceHigherTierWool, canProduceHigherTierWool ? happinessFactor : 0));
 
             double avgFactor = (alpaca.getHappiness() >= alpaca.getPrevHappinessAvg()) ? 1 : 0;
             qualityValue += prevHappyFactor * avgFactor;
@@ -275,6 +280,16 @@ public class Alpaca {
 
             alpaca.addQuality(qualityValue);
         }
+    }
+
+    private static boolean canProduceHigherTierWool(Alpaca alpaca) {
+        double tier = alpaca.getQuality() / 12.5;
+
+        if(tier < 1 && alpaca.getHappiness() >= Conf.woolTier1) return true;
+        if(tier >= 1 && tier < 2 && alpaca.getHappiness() >= Conf.woolTier2) return true;
+        if(tier >= 2 && tier < 3 && alpaca.getHappiness() >= Conf.woolTier3) return true;
+
+        return false;
     }
 
     private static void prevHappinessBehavior(Alpaca alpaca){
@@ -305,9 +320,10 @@ public class Alpaca {
         long previousPlay = jb.getMetadata("NUKA_PLAYING").get(0).asLong();
         long timeBetween = System.currentTimeMillis() - previousPlay;
 
-        return timeBetween <= PLUGIN.getConfig().getDouble("jukebox-play-time", 5)*60*1000;
+        return timeBetween <= Conf.jukeboxPlayTime*60*1000; //PLUGIN.getConfig().getDouble("jukebox-play-time", 5)
     }
 
+    // TODO: abstract to Conf
     public static void loadFoodValues() {
         if(ACCEPTED_FOOD != null) return;
 
@@ -331,10 +347,10 @@ public class Alpaca {
     }
 
     public void feed(ItemStack food){
-        if(this.feedAmount >= PLUGIN.getConfig().getDouble("alpaca-behavior.feed-amount", 12) && !PLUGIN.DEBUG){
-            if((System.currentTimeMillis() - this.lastFeed) >= PLUGIN.getConfig().getDouble("alpaca-behavior.feed-delay", 8)*60*60*1000) {
+        if(this.feedAmount >= Conf.maxFeedAmount && !PLUGIN.DEBUG){ //PLUGIN.getConfig().getDouble("alpaca-behavior.feed-amount", 12)
+            if((System.currentTimeMillis() - this.lastFeed) >= Conf.feedDelay*60*60*1000) {
                 this.feedAmount = 0;
-            } else return;
+            } else return; //PLUGIN.getConfig().getDouble("alpaca-behavior.feed-delay", 8)
         }
 
         double feedValue = ACCEPTED_FOOD.getOrDefault(food.getType(), 0.0);
@@ -389,7 +405,6 @@ public class Alpaca {
         if(this.prevHappiness.size() >= 10)
             this.prevHappiness.remove(0);
     }
-
     public double getPrevHappinessAvg() {
         double avg = 0;
 
@@ -400,7 +415,6 @@ public class Alpaca {
 
         return avg;
     }
-
 
     public Entity getEntity() { return this.entity; }
     public Location getLocation() { return this.entity.getLocation(); }

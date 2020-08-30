@@ -106,6 +106,7 @@ public class Main extends JavaPlugin {
         ArrayList<String> list = new ArrayList<>();
 
         this.alpacas.values().forEach(alpaca -> list.add(alpaca.toString()));
+        this.alpacas.values().forEach(alpaca -> alpaca.getEntity().remove());
 
         this.db.set("alpacas", list);
 

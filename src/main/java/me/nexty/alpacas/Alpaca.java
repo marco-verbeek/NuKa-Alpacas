@@ -11,10 +11,12 @@ import org.bukkit.block.Jukebox;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.logging.Level;
 
@@ -26,18 +28,18 @@ public class Alpaca {
     private Hologram hologram;
     private boolean hologramShown;
 
-    private String name;
-    private Gender gender;
+    private final String name;
+    private final Gender gender;
 
     private double hunger;
     private long lastFeed = -1;
     private double feedAmount = 0;
 
     private double happiness;
-    private ArrayList<Double> prevHappiness = new ArrayList<>();
+    private final ArrayList<Double> prevHappiness = new ArrayList<>();
 
-    private double quality;
     private double readiness;
+    private double quality;
 
     private static final char EMPTY_PROGRESS = '⬜';
     private static final char FULL_PROGRESS = '⬛';
@@ -54,6 +56,18 @@ public class Alpaca {
         this.happiness = Conf.startingHappiness;
         this.readiness = Conf.startingReadiness;
         this.quality = Conf.startingQuality;
+    }
+
+    public Alpaca(String name, Gender gender, Location loc, double hunger, double happiness, double readiness, double quality){
+        this.name = name;
+        this.gender = gender;
+        this.hunger = hunger;
+        this.happiness = happiness;
+        this.readiness = readiness;
+        this.quality = quality;
+
+        this.entity = Objects.requireNonNull(loc.getWorld()).spawnEntity(loc, EntityType.LLAMA);
+        this.entity.setMetadata("NUKA_ALPACA", new FixedMetadataValue(PLUGIN, true));
     }
 
     /**
@@ -353,6 +367,10 @@ public class Alpaca {
         return str.toString();
     }
 
+    public String toString(){
+        return String.format("%s|%s|%s|%f|%f|%f|%f", this.getName(), this.getGender().name(), this.getLocation().toString(), this.getHunger(), this.getHappiness(), this.getReadiness(), this.getQuality());
+    }
+
     public void setEntity(Entity entity) { this.entity = entity; }
     public void setHunger(double hunger) { this.hunger = hunger; }
     public void setHappiness(double happiness) { this.happiness = happiness; }
@@ -397,6 +415,7 @@ public class Alpaca {
     public double getHappiness() { return this.happiness; }
     public double getQuality() { return this.quality; }
     public double getReadiness() { return this.readiness; }
+    public Gender getGender() { return gender; }
 
     public boolean isReady() { return this.readiness == 100; }
 }

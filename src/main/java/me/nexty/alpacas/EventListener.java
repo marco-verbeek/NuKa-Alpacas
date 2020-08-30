@@ -78,7 +78,8 @@ public class EventListener implements Listener {
 
         try {
             if(!(Objects.requireNonNull(event.getClickedBlock()).getState() instanceof Jukebox)) return;
-            Jukebox jukebox = (Jukebox) event.getClickedBlock();
+
+            Jukebox jukebox = (Jukebox) event.getClickedBlock().getState();
             jukebox.setMetadata("NUKA_PLAYING", new FixedMetadataValue(this.plugin, System.currentTimeMillis()));
         } catch (NullPointerException ex){
             this.plugin.getLogger().severe("[Alpacas] NullPointerException during metadata setting.");

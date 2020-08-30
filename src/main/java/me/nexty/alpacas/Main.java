@@ -61,7 +61,7 @@ public class Main extends JavaPlugin {
             Entity entity = Objects.requireNonNull(Bukkit.getWorld("world")).spawnEntity(((Player) sender).getLocation(), EntityType.LLAMA);
             entity.setMetadata("NUKA_ALPACA", new FixedMetadataValue(this, true));
 
-            Alpaca alpaca = new Alpaca(entity, "Alpi", Gender.MALE);
+            Alpaca alpaca = new Alpaca(entity, (args.length == 0) ? "Alpi" : args[0], Gender.MALE);
             this.alpacas.put(entity.getUniqueId(), alpaca);
         }
 

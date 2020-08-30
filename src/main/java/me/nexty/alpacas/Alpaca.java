@@ -108,21 +108,19 @@ public class Alpaca {
     }
 
     /**
-     * Displays the Hologram above the Alpaca's head. After 5 seconds, deletes it.
+     * Displays the Hologram above the Alpaca's head. After Config.holoDisplayTime seconds, deletes it.
      * @return false in case the Hologram is null
      */
     private boolean displayHologram(){
         if(this.hologram == null) return false;
         hologramShown = true;
 
-        final double displayTime = Conf.holoDisplayTime;
-
         new BukkitRunnable(){
             int time = 0;
 
             @Override
             public void run() {
-                if(time >= displayTime*20){
+                if(time >= Conf.holoDisplayTime*20){
                     hologram.delete();
                     hologram = null;
                     hologramShown = false;

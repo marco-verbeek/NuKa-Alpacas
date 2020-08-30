@@ -16,7 +16,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.logging.Level;
 
@@ -66,7 +65,9 @@ public class Alpaca {
         this.readiness = readiness;
         this.quality = quality;
 
-        this.entity = Objects.requireNonNull(loc.getWorld()).spawnEntity(loc, EntityType.LLAMA);
+        assert loc.getWorld() != null;
+
+        this.entity = loc.getWorld().spawnEntity(loc, EntityType.LLAMA);
         this.entity.setMetadata("NUKA_ALPACA", new FixedMetadataValue(PLUGIN, true));
     }
 

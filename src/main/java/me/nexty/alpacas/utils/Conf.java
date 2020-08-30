@@ -1,6 +1,9 @@
 package me.nexty.alpacas.utils;
 
+import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
+
+import java.util.HashMap;
 
 public class Conf {
     public static double jukeboxPlayTime = 5;
@@ -26,6 +29,8 @@ public class Conf {
 
     public static double feedDelay = 8;
     public static double maxFeedAmount = 12;
+
+    public static HashMap<Material, Double> acceptedFoods;
 
     public static double woolTier1 = 25;
     public static double woolTier2 = 50;
@@ -59,5 +64,19 @@ public class Conf {
         woolTier1 = config.getDouble("alpaca-behavior.starting-hunger", 6*12);
         woolTier2 = config.getDouble("alpaca-behavior.starting-hunger", 6*12);
         woolTier3 = config.getDouble("alpaca-behavior.starting-hunger", 6*12);
+
+        acceptedFoods = new HashMap<Material, Double>() {{
+            for(String food : config.getStringList("alpaca-behavior.food")){
+                String[] data = food.split(" ");
+
+                try {
+                    put(Material.valueOf(data[0]), Double.parseDouble(data[1]));
+
+                } catch (IllegalArgumentException ex){
+                    //PLUGIN.getLogger().severe(String.format("[Alpacas] Could not add food item '%s'", food));
+                    System.out.println(String.format("[Alpacas] Could not add food item '%s'", food));
+                }
+            }
+        }};
     }
 }

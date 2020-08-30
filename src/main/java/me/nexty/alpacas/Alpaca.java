@@ -15,7 +15,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.logging.Level;
 
@@ -47,8 +46,6 @@ public class Alpaca {
     private static final char FULL_PROGRESS = '⬛';
 
     private static BukkitTask BEHAVIOR_TASK = null;
-
-    private static HashMap<Material, Double> ACCEPTED_FOOD;
 
     public Alpaca(Entity entity, String name, Gender gender){
         this.entity = entity;
@@ -323,27 +320,8 @@ public class Alpaca {
         return timeBetween <= Conf.jukeboxPlayTime*60*1000;
     }
 
-    // TODO: abstract to Conf
-    public static void loadFoodValues() {
-        if(ACCEPTED_FOOD != null) return;
-
-        ACCEPTED_FOOD = new HashMap<Material, Double>() {{
-            for(String food : PLUGIN.getConfig().getStringList("alpaca-behavior.food")){
-                String[] data = food.split(" ");
-
-                try {
-                    put(Material.valueOf(data[0]), Double.parseDouble(data[1]));
-
-                    if(PLUGIN.DEBUG) PLUGIN.getLogger().info(String.format("[Alpacas] Added food item '%s'", food));
-                } catch (IllegalArgumentException ex){
-                    PLUGIN.getLogger().severe(String.format("[Alpacas] Could not add food item '%s'", food));
-                }
-            }
-        }};
-    }
-
     public static boolean isFood(Material material){
-        return ACCEPTED_FOOD.get(material) != null;
+        return Conf.acceptedFoods.get(material) != null;
     }
 
     public void feed(ItemStack food){
@@ -353,7 +331,7 @@ public class Alpaca {
             } else return;
         }
 
-        double feedValue = ACCEPTED_FOOD.getOrDefault(food.getType(), 0.0);
+        double feedValue = Conf.acceptedFoods.getOrDefault(food.getType(), 0.0);
 
         this.feedAmount += feedValue;
         this.lastFeed = System.currentTimeMillis();

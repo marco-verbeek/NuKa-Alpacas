@@ -15,6 +15,7 @@ import org.bukkit.metadata.FixedMetadataValue;
 import org.spigotmc.event.entity.EntityMountEvent;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class EventListener implements Listener {
     private final Main plugin;
@@ -76,7 +77,8 @@ public class EventListener implements Listener {
         if(!DISKS.contains(held)) return;
 
         try {
-            Jukebox jukebox = (Jukebox) event.getClickedBlock().getState();
+            if(!(Objects.requireNonNull(event.getClickedBlock()).getState() instanceof Jukebox)) return;
+            Jukebox jukebox = (Jukebox) event.getClickedBlock();
             jukebox.setMetadata("NUKA_PLAYING", new FixedMetadataValue(this.plugin, System.currentTimeMillis()));
         } catch (NullPointerException ex){
             this.plugin.getLogger().severe("[Alpacas] NullPointerException during metadata setting.");

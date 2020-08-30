@@ -19,9 +19,6 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.logging.Level;
 
 public class Alpaca {
-    // TODO: serialize in order to save it in yml
-    // TODO: softdepend SaberFaction, if enabled: save Faction Name
-
     private static Main PLUGIN = null;
 
     private Entity entity;
@@ -206,7 +203,6 @@ public class Alpaca {
         alpaca.addHunger(randomValue);
     }
 
-    // TODO: clean these values, stupid to take memory space if already taking it
     private static void happinessBehavior(Alpaca alpaca){
         // These values are divided by six because this method is called six times per hour.
         double aloneFactor = Conf.aloneFactor / 6;

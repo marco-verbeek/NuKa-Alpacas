@@ -74,7 +74,7 @@ public class Conf {
 
                 } catch (IllegalArgumentException ex){
                     //PLUGIN.getLogger().severe(String.format("[Alpacas] Could not add food item '%s'", food));
-                    System.out.println(String.format("[Alpacas] Could not add food item '%s'", food));
+                    System.out.printf("[Alpacas] Could not add food item '%s'%n", food);
                 }
             }
         }};

@@ -373,7 +373,7 @@ public class Alpaca {
     }
 
     private static String loc2str(Location loc){
-        return String.format("%s:%f:%f:%f", loc.getWorld().toString(), loc.getX(), loc.getY(), loc.getZ());
+        return String.format("%s:%f:%f:%f", loc.getWorld().getName(), loc.getX(), loc.getY(), loc.getZ());
     }
 
     public void addHunger(double value) {

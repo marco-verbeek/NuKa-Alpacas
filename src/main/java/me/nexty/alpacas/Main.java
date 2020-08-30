@@ -105,8 +105,10 @@ public class Main extends JavaPlugin {
     private void saveToDB(){
         ArrayList<String> list = new ArrayList<>();
 
-        this.alpacas.values().forEach(alpaca -> list.add(alpaca.toString()));
-        this.alpacas.values().forEach(alpaca -> alpaca.getEntity().remove());
+        this.alpacas.values().stream().filter(alpaca -> !alpaca.getEntity().isDead()).forEach(alpaca -> {
+            list.add(alpaca.toString());
+            alpaca.getEntity().remove();
+        });
 
         this.db.set("alpacas", list);
 

@@ -26,7 +26,6 @@ public class Main extends JavaPlugin {
         Conf.loadConfigValues(this.getConfig());
 
         Alpaca.setPlugin(this);
-        Alpaca.loadFoodValues();
 
         if(this.DEBUG)
             Alpaca.startTestingBehavior();

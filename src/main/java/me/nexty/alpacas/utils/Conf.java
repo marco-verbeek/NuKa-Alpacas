@@ -6,8 +6,8 @@ import org.bukkit.configuration.file.FileConfiguration;
 import java.util.HashMap;
 
 public class Conf {
-    public static double jukeboxPlayTime = 5;
     public static double holoDisplayTime = 10;
+    public static double jukeboxPlayTime = 5;
 
     public static double startingHunger = 72;
     public static double startingHappiness = 48;

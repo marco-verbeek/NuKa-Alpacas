@@ -368,15 +368,12 @@ public class Alpaca {
     }
 
     public String toString(){
-        return String.format("%s|%s|%s|%f|%f|%f|%f", this.getName(), this.getGender().name(), this.getLocation().toString(), this.getHunger(), this.getHappiness(), this.getReadiness(), this.getQuality());
+        return String.format("%s|%s|%s|%f|%f|%f|%f", this.getName(), this.getGender().name(), loc2str(this.getLocation()), this.getHunger(), this.getHappiness(), this.getReadiness(), this.getQuality());
     }
 
-    public void setEntity(Entity entity) { this.entity = entity; }
-    public void setHunger(double hunger) { this.hunger = hunger; }
-    public void setHappiness(double happiness) { this.happiness = happiness; }
-
-    public void setReadiness(double readiness) { this.readiness = readiness; }
-    public void setQuality(double quality) { this.quality = quality; }
+    private static String loc2str(Location loc){
+        return String.format("%s:%f:%f:%f", loc.getWorld().toString(), loc.getX(), loc.getY(), loc.getZ());
+    }
 
     public void addHunger(double value) {
         this.hunger = Math.max(0, Math.min(100, this.hunger + value));
